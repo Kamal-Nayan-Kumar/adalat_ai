@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Courtroom — State vs. Ramesh Kumar | Adalat AI</title>
+<meta name="description" content="Live simulated courtroom: Judge, Prosecution, Defence and Witness AI agents on the record.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!--sprite:start-->
+<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false"><symbol id="i-judge" viewBox="0 0 24 24">
+    <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+    <path d="m16 16 6-6" />
+    <path d="m21.5 10.5-8-8" />
+    <path d="m8 8 6-6" />
+    <path d="m8.5 7.5 8 8" />
+  </symbol>
+  <symbol id="i-scales" viewBox="0 0 24 24">
+    <path d="M12 3v18" />
+    <path d="m19 8 3 8a5 5 0 0 1-6 0zV7" />
+    <path d="M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1" />
+    <path d="m5 8 3 8a5 5 0 0 1-6 0zV7" />
+    <path d="M7 21h10" />
+  </symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24">
+    <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+  </symbol>
+  <symbol id="i-witness" viewBox="0 0 24 24">
+    <circle cx="12" cy="8" r="5" />
+    <path d="M20 21a8 8 0 0 0-16 0" />
+  </symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24">
+    <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z" />
+    <path d="M22 10v6" />
+    <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5" />
+  </symbol>
+  <symbol id="i-landmark" viewBox="0 0 24 24">
+    <path d="M10 18v-7" />
+    <path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z" />
+    <path d="M14 18v-7" />
+    <path d="M18 18v-7" />
+    <path d="M3 22h18" />
+    <path d="M6 18v-7" />
+  </symbol>
+  <symbol id="i-chart-bars" viewBox="0 0 24 24">
+    <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+    <path d="M18 17V9" />
+    <path d="M13 17V5" />
+    <path d="M8 17v-3" />
+  </symbol>
+  <symbol id="i-book" viewBox="0 0 24 24">
+    <path d="M12 5v16" />
+    <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+  </symbol>
+  <symbol id="i-people" viewBox="0 0 24 24">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+    <path d="M16 3.128a4 4 0 0 1 0 7.744" />
+    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+    <circle cx="9" cy="7" r="4" />
+  </symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24">
+    <path d="M8 2v3" />
+    <path d="M16 2v3" />
+    <rect x="3" y="3" rx="2" />
+    <path d="M3 9h18" />
+  </symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24">
+    <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+    <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+    <path d="M10 9H8" />
+    <path d="M16 13H8" />
+    <path d="M16 17H8" />
+  </symbol>
+  <symbol id="i-gavel" viewBox="0 0 24 24">
+    <path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" />
+    <path d="m16 16 6-6" />
+    <path d="m21.5 10.5-8-8" />
+    <path d="m8 8 6-6" />
+    <path d="m8.5 7.5 8 8" />
+  </symbol>
+  <symbol id="i-doc-check" viewBox="0 0 24 24">
+    <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+    <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+    <path d="m9 15 2 2 4-4" />
+  </symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24">
+    <path d="M5 12h14" />
+    <path d="m12 5 7 7-7 7" />
+  </symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24">
+    <path d="m12 19-7-7 7-7" />
+    <path d="M19 12H5" />
+  </symbol>
+  <symbol id="i-play" viewBox="0 0 24 24">
+    <path d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z" />
+    <circle cx="12" cy="12" r="10" />
+  </symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10" />
+    <path d="m16 9-5.5 5.5L8 12" />
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24">
+    <path d="M20 6 9 17l-5-5" />
+  </symbol>
+  <symbol id="i-send" viewBox="0 0 24 24">
+    <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
+    <path d="m21.854 2.147-10.94 10.939" />
+  </symbol>
+  <symbol id="i-doc-lines" viewBox="0 0 24 24">
+    <path d="M15 2h-4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8" />
+    <path d="M16.706 2.706A2.4 2.4 0 0 0 15 2v5a1 1 0 0 0 1 1h5a2.4 2.4 0 0 0-.706-1.706z" />
+    <path d="M5 7a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h8a2 2 0 0 0 1.732-1" />
+  </symbol>
+  <symbol id="i-chart-line" viewBox="0 0 24 24">
+    <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+    <path d="m19 9-5 5-4-4-3 3" />
+  </symbol>
+  <symbol id="i-radar" viewBox="0 0 24 24">
+    <path d="M19.07 4.93A10 10 0 0 0 6.99 3.34" />
+    <path d="M4 6h.01" />
+    <path d="M2.29 9.62A10 10 0 1 0 21.31 8.35" />
+    <path d="M16.24 7.76A6 6 0 1 0 8.23 16.67" />
+    <path d="M12 18h.01" />
+    <path d="M17.99 11.66A6 6 0 0 1 15.77 16.67" />
+    <circle cx="12" cy="12" r="2" />
+    <path d="m13.41 10.59 5.66-5.66" />
+  </symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24">
+    <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+    <circle cx="12" cy="12" r="3" />
+  </symbol>
+  <symbol id="i-search" viewBox="0 0 24 24">
+    <path d="m21 21-4.34-4.34" />
+    <circle cx="11" cy="11" r="8" />
+  </symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24">
+    <path d="m9 18 6-6-6-6" />
+  </symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24">
+    <path d="m6 9 6 6 6-6" />
+  </symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24">
+    <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+    <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
+  </symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24">
+    <path d="m16 17 5-5-5-5" />
+    <path d="M21 12H9" />
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+  </symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24">
+    <path d="M5 12h14" />
+    <path d="M12 5v14" />
+  </symbol>
+  <symbol id="i-download" viewBox="0 0 24 24">
+    <path d="M12 15V3" />
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+    <path d="m7 10 5 5 5-5" />
+  </symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 6v6l4 2" />
+  </symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24">
+    <path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4" />
+  </symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24">
+    <path d="M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2" />
+    <path d="M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2" />
+    <path d="M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3" />
+    <path d="M4 22h16" />
+    <path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z" />
+    <path d="M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3" />
+  </symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24">
+    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
+    <path d="M12 9v4" />
+    <path d="M12 17h.01" />
+  </symbol>
+  <symbol id="i-gavel-lite" viewBox="0 0 24 24">
+    <path d="m15 12-9.373 9.373a1 1 0 0 1-3.001-3L12 9" />
+    <path d="m18 15 4-4" />
+    <path d="m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172v-.344a2 2 0 0 0-.586-1.414l-1.657-1.657A6 6 0 0 0 12.516 3H9l1.243 1.243A6 6 0 0 1 12 8.485V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5" />
+  </symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24">
+    <path d="M4 5h16" />
+    <path d="M4 12h16" />
+    <path d="M4 19h16" />
+  </symbol>
+  <symbol id="i-close" viewBox="0 0 24 24">
+    <path d="M18 6 6 18" />
+    <path d="m6 6 12 12" />
+  </symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24">
+    <path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z" />
+  </symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24">
+    <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+    <rect x="2" y="4" rx="2" />
+  </symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24">
+    <rect x="3" y="11" rx="2" ry="2" />
+    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+  </symbol>
+  <symbol id="i-user" viewBox="0 0 24 24">
+    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </symbol>
+  <symbol id="i-home" viewBox="0 0 24 24">
+    <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+    <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+  </symbol>
+  <symbol id="i-shield-check" viewBox="0 0 24 24">
+    <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+    <path d="m9 12 2 2 4-4" />
+  </symbol></svg>
+<!--sprite:end-->
+
+<div class="court" data-show="stage">
+  <div class="tabs" data-tabs role="tablist">
+    <button role="tab" data-tab="info" aria-selected="false">Case file</button>
+    <button role="tab" data-tab="stage" aria-selected="true">Court</button>
+    <button role="tab" data-tab="chat" aria-selected="false">Chat</button>
+  </div>
+
+
+  <!-- ==================== LEFT: CASE INFO ==================== -->
+  <aside class="court-col court-col--info">
+    <div class="court-head">
+      <span class="ic-slot ic-slot--40" style="background:var(--peach);color:var(--maroon)">
+        <svg class="ic is-sm"><use href="#i-doc-lines"/></svg>
+      </span>
+      <div>
+        <h2>Case file</h2>
+        <span style="font-size:12px;color:var(--muted)">State vs. Ramesh Kumar</span>
+      </div>
+    </div>
+
+    <div class="court-scroll">
+      <div class="court-info-block">
+        <h3>Registry</h3>
+        <ul class="court-list">
+          <li><svg class="ic is-xs"><use href="#i-landmark"/></svg>District Criminal Court</li>
+          <li><svg class="ic is-xs"><use href="#i-calendar"/></svg>Offence date 14 Mar 2024</li>
+          <li><svg class="ic is-xs"><use href="#i-shield-check"/></svg>BNS / BNSS / BSA 2023</li>
+        </ul>
+      </div>
+
+      <div class="court-info-block">
+        <h3>Case facts</h3>
+        <ul class="court-list">
+          <li><svg class="ic is-xs"><use href="#i-alert"/></svg>Death of the complainant at a roadside</li>
+          <li><svg class="ic is-xs"><use href="#i-alert"/></svg>Knife seized from the accused, PW4</li>
+          <li><svg class="ic is-xs"><use href="#i-witness"/></svg>Single eyewitness, PW1, injured</li>
+          <li><svg class="ic is-xs"><use href="#i-clock"/></svg>Alibi of 9:40 pm, uncorroborated</li>
+        </ul>
+      </div>
+
+      <div class="court-info-block">
+        <h3>Exhibits</h3>
+        <ul class="court-list">
+          <li><svg class="ic is-xs"><use href="#i-doc-lines"/></svg>Ex.1 &mdash; Post-mortem report</li>
+          <li><svg class="ic is-xs"><use href="#i-doc-lines"/></svg>Ex.2 &mdash; Seized knife, memo</li>
+          <li><svg class="ic is-xs"><use href="#i-doc-lines"/></svg>Ex.3 &mdash; Site sketch</li>
+          <li><svg class="ic is-xs"><use href="#i-doc-lines"/></svg>Ex.4 &mdash; FIR copy</li>
+        </ul>
+      </div>
+
+      <div class="court-info-block">
+        <h3>Skill tracker</h3>
+        <div class="bars">
+          <div class="bar-row" data-skill="8.4">
+            <span>Opening</span><em></em>
+            <i class="bar-track"><b class="bar-fill is-gold"></b></i>
+          </div>
+          <div class="bar-row" data-skill="7.6">
+            <span>Examination</span><em></em>
+            <i class="bar-track"><b class="bar-fill"></b></i>
+          </div>
+          <div class="bar-row" data-skill="6.9">
+            <span>Cross</span><em></em>
+            <i class="bar-track"><b class="bar-fill"></b></i>
+          </div>
+          <div class="bar-row" data-skill="8.1">
+            <span>Objections</span><em></em>
+            <i class="bar-track"><b class="bar-fill is-green"></b></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==================== CENTRE: COURT ==================== -->
+  <main class="court-col court-col--stage">
+    <div class="court-head">
+      <h2>Courtroom</h2>
+      <span class="app-live" style="margin-left:8px"><i></i>Live</span>
+      <div class="court-head" style="margin-left:auto;border:0;padding:0;min-height:0">
+        <button class="ic-btn" id="open-verdict" aria-label="Show verdict">
+          <svg class="ic"><use href="#i-trophy"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="bench">
+        <span class="ic-slot ic-slot--64">
+          <svg class="ic is-2xl"><use href="#i-judge"/></svg>
+        </span>
+        <div>
+          <div class="bench-name">The Hon&rsquo;ble Judge AI</div>
+          <div class="bench-role">Presiding</div>
+        </div>
+        <span class="bench-status"><i></i><span id="stage-status">Prosecution&rsquo;s turn</span></span>
+      </div>
+
+      <div class="agents-row">
+        <article class="agent-seat">
+          <span class="ic-slot ic-slot--48"><svg class="ic is-lg"><use href="#i-scales"/></svg></span>
+          <b>Prosecution AI</b>
+          <em>Presents the case for the State</em>
+          <span class="tag tag-neutral">Speaking</span>
+        </article>
+        <article class="agent-seat">
+          <span class="ic-slot ic-slot--48"><svg class="ic is-lg"><use href="#i-shield"/></svg></span>
+          <b>Defence AI</b>
+          <em>Cross-examines and objects</em>
+          <span class="tag tag-neutral">Waiting</span>
+        </article>
+        <article class="agent-seat">
+          <span class="ic-slot ic-slot--48"><svg class="ic is-lg"><use href="#i-witness"/></svg></span>
+          <b>Witness AI</b>
+          <em>Answers only from the case file</em>
+          <span class="tag tag-neutral">In the box</span>
+        </article>
+      </div>
+
+      <div class="stage-foot">
+        <span>You are the counsel for the Defence</span>
+        <span class="divider" aria-hidden="true"></span>
+        <span>Section 238 BNSS &mdash; examination of witnesses</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== RIGHT: CHAT ==================== -->
+  <aside class="court-col court-col--chat" id="chat-col">
+    <div class="court-head">
+      <span class="ic-slot ic-slot--40" style="background:var(--rose);color:var(--maroon)">
+        <svg class="ic is-sm"><use href="#i-gavel-lite"/></svg>
+      </span>
+      <h2>Proceedings</h2>
+      <button class="ic-btn" aria-label="Download transcript"><svg class="ic is-sm"><use href="#i-download"/></svg></button>
+    </div>
+
+    <div class="court-scroll">
+      <div class="chat-stream" id="chat-stream">
+        <div class="msg is-judge">
+          <span class="ic-slot ic-slot--40"><svg class="ic is-sm"><use href="#i-judge"/></svg></span>
+          <div class="msg-bubble">
+            <div class="msg-who">Judge AI</div>
+            <div class="msg-text">The matter is called. Let the record state that the accused is present and the counsel for the State may proceed.</div>
+            <div class="msg-time">10:32</div>
+          </div>
+        </div>
+
+        <div class="msg">
+          <span class="ic-slot ic-slot--40"><svg class="ic is-sm"><use href="#i-scales"/></svg></span>
+          <div class="msg-bubble">
+            <div class="msg-who">Prosecution AI</div>
+            <div class="msg-text">State calls PW1, the eyewitness. I offer PW1 for examination-in-chief.</div>
+            <div class="msg-time">10:33</div>
+          </div>
+        </div>
+
+        <div class="msg is-judge">
+          <span class="ic-slot ic-slot--40"><svg class="ic is-sm"><use href="#i-judge"/></svg></span>
+          <div class="msg-bubble">
+            <div class="msg-who">Judge AI</div>
+            <div class="msg-text">PW1 is examined. Objections, counsel for the Defence?</div>
+            <div class="msg-time">10:33</div>
+          </div>
+        </div>
+
+        <div class="msg">
+          <span class="ic-slot ic-slot--40"><svg class="ic is-sm"><use href="#i-witness"/></svg></span>
+          <div class="msg-bubble">
+            <div class="msg-who">Witness AI</div>
+            <div class="msg-text">I saw the accused near the bus stop at about 9:40 pm. The light from the shop was on. I did not recognise him at first.</div>
+            <div class="msg-time">10:34</div>
+          </div>
+        </div>
+
+        <div class="msg is-judge">
+          <span class="ic-slot ic-slot--40"><svg class="ic is-sm"><use href="#i-judge"/></svg></span>
+          <div class="msg-bubble">
+            <div class="msg-who">Judge AI</div>
+            <div class="msg-text">Counsel, the witness has paused mid-answer. You may proceed with your cross-examination.</div>
+            <div class="msg-time">10:35</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form class="composer" onsubmit="return false">
+      <div class="chips">
+        <button class="chip-btn" type="button" data-say="I have an objection, Your Honour. The question is leading.">Objection</button>
+        <button class="chip-btn" type="button" data-say="I tender Ex.2, the seizure memo of the knife, for identification.">Tender exhibit</button>
+        <button class="chip-btn" type="button" data-say="I seek permission to put the prior statement of PW1 to the witness.">Permission gate</button>
+        <button class="chip-btn" type="button" data-say="May I reserve my right to further cross-examine this witness?">Reserve</button>
+      </div>
+      <div class="composer-row">
+        <input type="text" id="composer-input" placeholder="Enter your submission or objection" aria-label="Your submission">
+        <button class="composer-send" id="composer-send" type="button" aria-label="Send">
+          <svg class="ic is-sm"><use href="#i-send"/></svg>
+        </button>
+      </div>
+    </form>
+  </aside>
+</div>
+
+<!-- ==================== VERDICT MODAL ==================== -->
+<div class="modal" id="verdict" hidden role="dialog" aria-modal="true" aria-labelledby="verdict-title">
+  <div class="modal-card">
+    <span class="ic-slot ic-slot--48" style="background:var(--peach);color:var(--maroon)">
+      <svg class="ic is-lg"><use href="#i-trophy"/></svg>
+    </span>
+    <h2 id="verdict-title" style="margin-top:16px">Verdict on State vs. Ramesh Kumar</h2>
+    <p>On the admitted record only, the Court finds the prosecution has not proved the presence of the accused at the scene beyond the statement of PW1, which is materially contradicted by Ex.3.</p>
+    <p style="margin-top:12px">The accused is <strong>acquitted</strong> and set at liberty. Your cross-examination score was <strong>6.9/10</strong> &mdash; the contradiction landed, but you moved on before the answer was complete.</p>
+    <div style="display:flex;gap:12px;margin-top:24px">
+      <button class="btn btn-primary" type="button" data-close>Read full report</button>
+      <button class="btn btn-outline" type="button" data-close>Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

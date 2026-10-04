@@ -1,0 +1,52 @@
+// Guard against silent JS breakage on every page: collect uncaught errors,
+// failed requests and missing icons, for all pages at once.
+const PAGES = ["index.html", "login.html", "signup.html", "dashboard.html", "cases.html", "courtroom.html"];
+
+const task = await taskSpace(2);
+const page = task.page("p1");
+await page.cdp("Network.enable");
+await page.cdp("Network.setCacheDisabled", { cacheDisabled: true });
+const problems = [];
+
+for (const p of PAGES) {
+  await page.cdp("Runtime.enable");
+  await page.events();          // drain the buffer so errors are attributed correctly
+  await page.goto(`http://localhost:4174/${p}`);
+  await page.waitForTimeout(1300);
+
+  const events = await page.events();
+  for (const e of events) {
+    if (e.method === "Runtime.exceptionThrown") {
+      const d = e.params.exceptionDetails;
+      problems.push(`${p}: JS ${d.exception?.description?.split("\n")[0] || d.text} (line ${d.lineNumber})`);
+    }
+  }
+
+  const r = await page.evaluate(() => {
+    const out = {};
+    // every <use> must point at a symbol that exists in the inlined sprite
+    const ids = new Set([...document.querySelectorAll("symbol")].map((s) => s.id));
+    const missing = [...document.querySelectorAll(".ic use")]
+      .map((u) => u.getAttribute("href"))
+      .filter((h) => h && h.startsWith("#") && !ids.has(h.slice(1)));
+    out.missingIcons = [...new Set(missing)];
+    // charts should have drawn something
+    ["chart-trend", "chart-radar", "chart-bars"].forEach((id) => {
+      const s = document.getElementById(id);
+      if (s && s.children.length === 0) out.emptyCharts = (out.emptyCharts || []).concat(id);
+    });
+    const heat = document.getElementById("heat");
+    if (heat && heat.children.length === 0) out.emptyCharts = (out.emptyCharts || []).concat("heat");
+    // any img that failed to load
+    out.brokenImages = [...document.images]
+      .filter((i) => !i.complete || i.naturalWidth === 0)
+      .map((i) => i.getAttribute("src"));
+    return out;
+  });
+
+  for (const [k, v] of Object.entries(r)) {
+    if (Array.isArray(v) && v.length) problems.push(`${p}: ${k} -> ${v.join(", ")}`);
+  }
+}
+
+console.log(problems.length ? problems.join("\n") : "ALL CLEAN: no JS errors, no broken images, all icons resolve");

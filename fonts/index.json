@@ -1,0 +1,106 @@
+{
+ "Figtree": {
+  "400": "fonts/Figtree-400.woff2",
+  "500": "fonts/Figtree-500.woff2",
+  "600": "fonts/Figtree-600.woff2",
+  "700": "fonts/Figtree-700.woff2",
+  "800": "fonts/Figtree-800.woff2"
+ },
+ "DM_Sans": {
+  "400": "fonts/DM_Sans-400.woff2",
+  "500": "fonts/DM_Sans-500.woff2",
+  "700": "fonts/DM_Sans-700.woff2"
+ },
+ "Plus_Jakarta_Sans": {
+  "400": "fonts/Plus_Jakarta_Sans-400.woff2",
+  "500": "fonts/Plus_Jakarta_Sans-500.woff2",
+  "600": "fonts/Plus_Jakarta_Sans-600.woff2",
+  "700": "fonts/Plus_Jakarta_Sans-700.woff2",
+  "800": "fonts/Plus_Jakarta_Sans-800.woff2"
+ },
+ "Outfit": {
+  "400": "fonts/Outfit-400.woff2",
+  "500": "fonts/Outfit-500.woff2",
+  "600": "fonts/Outfit-600.woff2",
+  "700": "fonts/Outfit-700.woff2"
+ },
+ "Inter": {
+  "400": "fonts/Inter-400.woff2",
+  "500": "fonts/Inter-500.woff2",
+  "600": "fonts/Inter-600.woff2",
+  "700": "fonts/Inter-700.woff2"
+ },
+ "Poppins": {
+  "400": "fonts/Poppins-400.woff2",
+  "500": "fonts/Poppins-500.woff2",
+  "600": "fonts/Poppins-600.woff2",
+  "700": "fonts/Poppins-700.woff2"
+ },
+ "Manrope": {
+  "400": "fonts/Manrope-400.woff2",
+  "500": "fonts/Manrope-500.woff2",
+  "600": "fonts/Manrope-600.woff2",
+  "700": "fonts/Manrope-700.woff2",
+  "800": "fonts/Manrope-800.woff2"
+ },
+ "Playfair_Display": {
+  "400": "fonts/Playfair_Display-400.woff2",
+  "500": "fonts/Playfair_Display-500.woff2",
+  "600": "fonts/Playfair_Display-600.woff2",
+  "700": "fonts/Playfair_Display-700.woff2",
+  "800": "fonts/Playfair_Display-800.woff2",
+  "900": "fonts/Playfair_Display-900.woff2"
+ },
+ "Merriweather": {
+  "400": "fonts/Merriweather-400.woff2",
+  "700": "fonts/Merriweather-700.woff2",
+  "900": "fonts/Merriweather-900.woff2"
+ },
+ "Libre_Baskerville": {
+  "400": "fonts/Libre_Baskerville-400.woff2",
+  "700": "fonts/Libre_Baskerville-700.woff2"
+ },
+ "Lora": {
+  "400": "fonts/Lora-400.woff2",
+  "500": "fonts/Lora-500.woff2",
+  "600": "fonts/Lora-600.woff2",
+  "700": "fonts/Lora-700.woff2"
+ },
+ "Source_Serif_4": {
+  "400": "fonts/Source_Serif_4-400.woff2",
+  "600": "fonts/Source_Serif_4-600.woff2",
+  "700": "fonts/Source_Serif_4-700.woff2"
+ },
+ "Fraunces": {
+  "400": "fonts/Fraunces-400.woff2",
+  "700": "fonts/Fraunces-700.woff2",
+  "900": "fonts/Fraunces-900.woff2"
+ },
+ "Sora": {
+  "400": "fonts/Sora-400.woff2",
+  "600": "fonts/Sora-600.woff2",
+  "700": "fonts/Sora-700.woff2"
+ },
+ "Mulish": {
+  "400": "fonts/Mulish-400.woff2",
+  "600": "fonts/Mulish-600.woff2",
+  "700": "fonts/Mulish-700.woff2",
+  "800": "fonts/Mulish-800.woff2"
+ },
+ "Nunito_Sans": {
+  "400": "fonts/Nunito_Sans-400.woff2",
+  "600": "fonts/Nunito_Sans-600.woff2",
+  "700": "fonts/Nunito_Sans-700.woff2",
+  "800": "fonts/Nunito_Sans-800.woff2"
+ },
+ "Hind": {
+  "400": "fonts/Hind-400.woff2",
+  "600": "fonts/Hind-600.woff2",
+  "700": "fonts/Hind-700.woff2"
+ },
+ "Karla": {
+  "400": "fonts/Karla-400.woff2",
+  "600": "fonts/Karla-600.woff2",
+  "700": "fonts/Karla-700.woff2"
+ }
+}
