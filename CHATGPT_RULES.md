@@ -44,7 +44,7 @@ Rules that always go in the prompt:
 | Asset | Source | Reason |
 |---|---|---|
 | Logo mark (scales) | ChatGPT image | Needs illustration quality |
-| Hero courtroom illustration | ChatGPT image | Needs illustration quality |
+| Hero courtroom illustration | **supplied by hand** | The hand-supplied render has correct Devanagari, which image generation cannot reliably draw. A ChatGPT version is kept in `PROMPTS.md` as a fallback only. |
 | CTA banner background | ChatGPT image | Needs illustration quality |
 | Symmetric courtroom (courtroom stage) | ChatGPT image | Needs illustration quality |
 | Auth page side illustration | ChatGPT image | Needs illustration quality |

@@ -11,6 +11,12 @@ Rules for using that chat live in `CHATGPT_RULES.md`.
 
 ## 1. Hero illustration → `assets/hero-courtroom.png`
 
+> **Superseded.** The hero image is no longer the image below. It was replaced
+> with `Grand Indian Courtroom with Legal Books (1).png`, supplied by hand: a
+> symmetric frontal courtroom with correct Devanagari (`सत्यमेव जयते`,
+> `अदालत`) and the BNS/BNSS/BSA and IPC/CrPC/Evidence book stacks.
+> The prompt below is kept only as the record of the earlier generation.
+
 ```text
 Create a wide flat vector illustration for a website hero banner, 16:9 landscape aspect ratio.
 
