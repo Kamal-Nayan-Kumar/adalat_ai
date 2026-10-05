@@ -15,6 +15,7 @@ PLAN = {
     'hero-courtroom': (1200, 1200, 82),   # hero right-hand illustration
     'banner-cta':     (2000, 1600, 80),   # full-bleed CTA band
     'auth-panel':     (900,  900,  80),   # auth page side panel
+    'court-front':    (1400, 1200, 80),   # symmetric courtroom, courtroom stage backdrop
     'logo-mark':      (160,  160,  90),   # shown at 24-44px, needs a crisp mark
 }
 

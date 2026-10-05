@@ -59,6 +59,20 @@ or optical size, which is what makes an icon set look "forcefully made".
       `.field .input-wrap > .ic`
 - [x] **Removed the Google / Microsoft block** from `login.html` (and its now
       dead `.auth-divider` CSS)
+- [x] **Hero illustration was overlapping the pill row** — the third pill sat on
+      the artwork. Sized the image to clear the copy column and moved the fade onto
+      the image as a mask (an overlay gradient is sized to the viewport and so never
+      lined up with a narrower, right-anchored image)
+- [x] **Broken rect-based icons** — the builder stripped `width`/`height` from icon
+      children, collapsing Lucide's `<rect>` in calendar, mail and lock. Only the
+      root `<svg>` may be stripped
+- [x] **Legal-regime band** — full calendar icons restored, and the one-sided arrow
+      replaced with Lucide `arrow-left-right`
+- [x] **Hero pill icons** — "For Law Students" and "For Judiciary Aspirants" now use
+      the scales of justice motif
+- [x] **New symmetric courtroom illustration** — generated and used as the backdrop
+      of the courtroom simulator's centre stage; stage footer given its own ground
+      so it stays legible over the art
 
 - [x] **Hero image overflow** — clipped inside the band, right-anchored, no longer
       widens the page at any width

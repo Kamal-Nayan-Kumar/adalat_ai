@@ -175,13 +175,15 @@ svg{display:block}
 .hero-media picture,.hero-media img{display:block}
 .hero-media img{
   position:absolute;top:50%;right:0;transform:translateY(-50%);
-  width:min(66%,1080px);height:auto;max-width:none;
+  width:min(54%,860px);height:auto;max-width:none;
+  object-position:60% center;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.5) 9%,#000 22%);
+  mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.5) 9%,#000 22%);
 }
 /* soft fade so the illustration melts into the page instead of butting against the copy */
 .hero-media::after{
   content:"";position:absolute;inset:0;
-  background:linear-gradient(90deg,var(--ivory) 0%,var(--ivory) 18%,rgba(254,252,247,.94) 28%,rgba(254,252,247,.6) 38%,rgba(254,252,247,.18) 46%,rgba(254,252,247,0) 54%),
-             linear-gradient(180deg,var(--ivory) 0%,rgba(254,252,247,0) 12%,rgba(254,252,247,0) 84%,var(--ivory) 100%);
+  background:linear-gradient(180deg,var(--ivory) 0%,rgba(254,252,247,0) 12%,rgba(254,252,247,0) 84%,var(--ivory) 100%);
 }
 .hero-copy{max-width:600px;padding:56px 0 64px}
 .hero-title{font-family:var(--serif);font-weight:800;font-size:56px;line-height:1.14;color:var(--ink);letter-spacing:-.5px}
@@ -554,8 +556,20 @@ table.data .strong{font-weight:600;color:var(--ink)}
 .court-col{min-width:0;display:flex;flex-direction:column;border-right:1px solid var(--line);background:#fff}
 .court-col--info{border-right:1px solid var(--line)}
 .court[data-show]{}
-.court-col--stage{background:
-  radial-gradient(120% 80% at 50% 0%,#FFF6EA 0%,rgba(255,246,234,0) 60%),var(--ivory)}
+.court-col--stage{
+  position:relative;isolation:isolate;
+  background:radial-gradient(120% 80% at 50% 0%,#FFF6EA 0%,rgba(255,246,234,0) 60%),var(--ivory);
+}
+/* Symmetric courtroom illustration, anchored to the bottom of the stage and
+   faded into the page so it never competes with the bench or the agent cards. */
+.stage-bg{position:absolute;inset:auto 0 0 0;height:78%;z-index:-1;overflow:hidden;pointer-events:none}
+.stage-bg img{width:100%;height:100%;object-fit:cover;object-position:50% 72%}
+.stage-bg::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,var(--ivory) 0%,rgba(254,252,247,.86) 12%,rgba(254,252,247,.35) 26%,rgba(254,252,247,0) 42%),
+             linear-gradient(0deg,rgba(254,252,247,.55) 0%,rgba(254,252,247,0) 26%);
+}
+.stage{position:relative;z-index:1}
 .court-col--chat{border-right:0;border-left:1px solid var(--line)}
 .court-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line);min-height:66px}
 .court-head h2{font-family:var(--serif);font-weight:700;font-size:16px;line-height:1.3;color:var(--ink)}
@@ -585,7 +599,14 @@ table.data .strong{font-weight:600;color:var(--ink)}
 .agent-seat b{display:block;font-family:var(--serif);font-weight:700;font-size:15.5px;line-height:1.3;color:var(--ink)}
 .agent-seat em{display:block;margin-top:4px;font-style:normal;font-size:12.5px;line-height:1.4;color:var(--muted)}
 .agent-seat .tag{margin-top:12px}
-.stage-foot{display:flex;align-items:center;gap:14px;justify-content:center;font-size:13.5px;color:var(--muted);text-align:center}
+.stage-foot{
+  display:flex;align-items:center;gap:14px;justify-content:center;flex-wrap:wrap;
+  font-size:13.5px;color:var(--body);text-align:center;
+  /* sits over the illustration, so it needs its own ground */
+  background:rgba(254,252,247,.97);
+  border:1px solid var(--line);border-radius:var(--r-pill);
+  padding:9px 20px;align-self:center;
+}
 .stage-foot .divider{width:1px;height:18px;background:var(--line)}
 
 .chat-stream{display:flex;flex-direction:column;gap:14px}
@@ -730,6 +751,7 @@ table.data .strong{font-weight:600;color:var(--ink)}
   .app-body{grid-template-columns:minmax(0,1fr);height:auto}
   .app-side,.app-rail{display:none}
   .agents-row{grid-template-columns:minmax(0,1fr)}
+  .stage-bg{height:52%}
   .bench{flex-direction:column;text-align:center}
   .bench-status{margin-left:0}
   .app-crumb{display:none}

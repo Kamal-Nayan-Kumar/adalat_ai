@@ -46,6 +46,7 @@ Rules that always go in the prompt:
 | Logo mark (scales) | ChatGPT image | Needs illustration quality |
 | Hero courtroom illustration | ChatGPT image | Needs illustration quality |
 | CTA banner background | ChatGPT image | Needs illustration quality |
+| Symmetric courtroom (courtroom stage) | ChatGPT image | Needs illustration quality |
 | Auth page side illustration | ChatGPT image | Needs illustration quality |
 | Empty-state illustrations | ChatGPT image | Needs illustration quality |
 | **All UI icons** | **Lucide icon set** | Icons must match in weight and grid. Lucide is one library on one 24x24 grid with one 2px stroke, so it is consistent by construction. AI-rendered and hand-drawn sets never are. See `assets/icons.svg` and `dev/build_icons_from_lucide.py`. |

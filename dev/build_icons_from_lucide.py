@@ -36,6 +36,7 @@ MAPPING = {
     'i-doc-check':     'file-check',
     'i-arrow-right':   'arrow-right',
     'i-arrow-left':    'arrow-left',
+    'i-arrow-swap':   'arrow-left-right',
     'i-play':          'circle-play',
     'i-check-circle':  'circle-check',
     'i-check':         'check',
@@ -99,17 +100,18 @@ HEADER = '''<?xml version="1.0" encoding="UTF-8"?>
 
 def to_symbol(icon_id, svg_text):
     body = re.search(r'<svg[^>]*>(.*)</svg>', svg_text, flags=re.S).group(1)
-    # Lucide repeats stroke settings on every child; drop them so the single
-    # CSS value applies to the whole set.
+    # Lucide repeats stroke settings on every child; drop them so the single CSS
+    # value applies to the whole set.
     body = re.sub(r'\s+stroke="[^"]*"', '', body)
     body = re.sub(r'\s+stroke-width="[^"]*"', '', body)
     body = re.sub(r'\s+stroke-linecap="[^"]*"', '', body)
     body = re.sub(r'\s+stroke-linejoin="[^"]*"', '', body)
-    body = re.sub(r'\s+width="[^"]*"', '', body)
-    body = re.sub(r'\s+height="[^"]*"', '', body)
+    # Only the root <svg> carries presentation width/height. Stripping those from
+    # children as well would zero the <rect> in calendar, mail and lock and leave
+    # only their stray path segments.
     body = re.sub(r'\s+class="ic-fill"', '', body)
     body = '\n'.join('    ' + ln.strip() for ln in body.strip().splitlines())
-    return f'  <symbol id="{icon_id}" viewBox="0 0 24 24">\n{body}\n  </symbol>'
+    return f'  <symbol id="{icon_id}" viewBox="0 0 24 24">\n{body}\n  </symbol>' 
 
 
 out = [HEADER]

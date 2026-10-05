@@ -25,6 +25,10 @@ served from the browser cache.
 | `cases.html` | Cause list with search and filters |
 | `courtroom.html` | Courtroom simulator: case file, court stage, live proceedings |
 
+The centre stage of `courtroom.html` sits on a generated symmetric courtroom
+illustration (`assets/court-front.png`), faded in with a mask so it never competes
+with the bench and agent cards.
+
 Shared files: `styles.css` (design system), `app.js` (behaviour), `assets/icons.svg`
 (icon sprite), `assets/fonts`.
 
@@ -103,6 +107,13 @@ need to save output write to `/tmp` and the caller moves it into place.
 - **Playfair and the Devanagari face need line-height above 1.** At `1` their
   descenders and matras are clipped.
 - Icons sit in fixed `.ic-slot--*` boxes so a row of them optically aligns.
+- **Never strip `width`/`height` from an icon's children.** Lucide draws some
+  glyphs with `<rect width height>`; removing those attributes collapses the shape
+  to nothing and leaves only stray path segments. This broke calendar, mail and
+  lock, so the email and password fields showed fragments instead of icons.
+- **Fade a positioned image with a mask, not an overlay gradient.** A gradient on
+  a full-bleed overlay is sized to the overlay, so it never lines up with an image
+  that is right-anchored and narrower than the viewport.
 - **Scope rules by child, not by descendant.** `.field label` and `.field .ic`
   both matched the signup role pickers (which are `<label>` elements inside
   `.field`) and silently beat `.role-opt` on specificity — the icon went

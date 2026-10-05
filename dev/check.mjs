@@ -35,6 +35,32 @@ for (const p of PAGES) {
       const s = document.getElementById(id);
       if (s && s.children.length === 0) out.emptyCharts = (out.emptyCharts || []).concat(id);
     });
+    // A <rect> with no width/height, or a <circle> with no r, renders as nothing
+    // and leaves only stray path segments. This is how the calendar, mail and lock
+    // glyphs were silently broken.
+    for (const sym of document.querySelectorAll("symbol")) {
+      for (const r of sym.querySelectorAll("rect")) {
+        if (!r.getAttribute("width") || !r.getAttribute("height")) {
+          out.brokenGlyphs = (out.brokenGlyphs || []).concat(sym.id + ":rect-no-size");
+        }
+      }
+      for (const c of sym.querySelectorAll("circle")) {
+        if (!c.getAttribute("r")) {
+          out.brokenGlyphs = (out.brokenGlyphs || []).concat(sym.id + ":circle-no-r");
+        }
+      }
+    }
+    // an icon that rendered but has collapsed to nothing
+    for (const svg of document.querySelectorAll(".ic")) {
+      const box = svg.getBoundingClientRect();
+      if (box.width > 0 && box.height > 0 && (box.width < 4 || box.height < 4)) {
+        const href = svg.querySelector("use");
+        out.brokenGlyphs = (out.brokenGlyphs || []).concat(
+          (href ? href.getAttribute("href") : "?") + ":collapsed",
+        );
+      }
+    }
+
     const heat = document.getElementById("heat");
     if (heat && heat.children.length === 0) out.emptyCharts = (out.emptyCharts || []).concat("heat");
     // any img that failed to load
