@@ -82,7 +82,7 @@ Drive user actions using `ego-browser nodejs`. Always target stable ARIA roles, 
 ## Evidence
 
 Every verification run must capture tangible proof into `artifacts/verify-adalat/<feature>/`:
-1. **Visual proof:** Full or viewport screenshot via `page.screenshot({ path })`.
+1. **Visual proof:** Full or viewport screenshot via `page.screenshot({ path })` or `./dev/control-adalat shot <page> <dest> [width]`. For all frontend changes, capture screenshots of the affected pages (desktop and mobile viewports) and embed them directly in the response using Markdown with absolute file paths.
 2. **Semantic proof:** ARIA or DOM snapshot via `page.snapshot()` or evaluated state.
 3. **Execution proof:** Clean exit code and console transcript confirming user action and resulting DOM reaction.
 
