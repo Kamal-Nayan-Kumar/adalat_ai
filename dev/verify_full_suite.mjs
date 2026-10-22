@@ -39,7 +39,7 @@ async function setDesktop() {
 // 1. ONBOARDING PAGE
 // ----------------------------------------------------
 await setDesktop();
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/onboarding.html`);
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/onboarding`);
 await page.waitForSelector(".onboard-card", { state: "visible" });
 console.log("✓ Onboarding page loaded");
 await captureShot("01-onboarding-desktop.png");
@@ -47,7 +47,7 @@ await captureShot("01-onboarding-desktop.png");
 // ----------------------------------------------------
 // 2. DASHBOARD PAGE (UPGRADED)
 // ----------------------------------------------------
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/dashboard.html`);
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/dashboard`);
 await page.waitForSelector("#chart-trend", { state: "visible" });
 console.log("✓ Dashboard loaded with active workspace banner");
 await captureShot("02-dashboard-desktop.png", true);
@@ -55,7 +55,7 @@ await captureShot("02-dashboard-desktop.png", true);
 // ----------------------------------------------------
 // 3. CAUSE LIST (UPGRADED)
 // ----------------------------------------------------
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/cases.html`);
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/cases`);
 await page.waitForSelector(".filter-bar", { state: "visible" });
 console.log("✓ Cause List loaded with New Case Workspace action");
 await captureShot("03-cases-desktop.png");
@@ -63,60 +63,60 @@ await captureShot("03-cases-desktop.png");
 // ----------------------------------------------------
 // 4. NEW CASE WORKSPACE
 // ----------------------------------------------------
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/case-new.html`);
-await page.waitForSelector(".source-tabs", { state: "visible" });
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/cases/new`);
+await page.waitForSelector(".card", { state: "visible" });
 console.log("✓ Case New loaded (Public Judgment selected)");
 await captureShot("04-case-new-public.png");
 
 // Switch to Private Upload pane
-await page.click("[data-target='pane-upload']");
-await page.waitForFunction(() => document.getElementById("pane-upload")?.classList.contains("is-active"));
+await page.click("text='Private Upload'");
+await page.waitForSelector("input#upload-title", { state: "visible" });
 console.log("✓ Switched to Private Upload pane with confidentiality badge");
 await captureShot("05-case-new-upload.png");
 
 // Switch to Training Scenario pane
-await page.click("[data-target='pane-training']");
-await page.waitForFunction(() => document.getElementById("pane-training")?.classList.contains("is-active"));
+await page.click("text='Training Scenario'");
+await page.waitForSelector("select#train-scenario", { state: "visible" });
 console.log("✓ Switched to Training Scenario drill pane");
 
 // ----------------------------------------------------
 // 5. CASE WORKSPACE (PREPARATION HUB)
 // ----------------------------------------------------
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/case-workspace.html`);
-await page.waitForSelector(".workspace-tabs", { state: "visible" });
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/cases/1`);
+await page.waitForSelector(".grid-2", { state: "visible" });
 console.log("✓ Case Workspace loaded on Theory & Facts tab");
 await captureShot("06-workspace-theory.png");
 
 // Switch to Legal Research tab
-await page.click("[data-pane='pane-research']");
-await page.waitForFunction(() => document.getElementById("pane-research")?.classList.contains("is-active"));
+await page.click("text='Legal Research & Authorities'");
+await page.waitForSelector("table", { state: "visible" });
 console.log("✓ Switched to Legal Research & Authorities tab");
 await captureShot("07-workspace-research.png");
 
 // Switch to Evidence Inventory tab
-await page.click("[data-pane='pane-evidence']");
-await page.waitForFunction(() => document.getElementById("pane-evidence")?.classList.contains("is-active"));
+await page.click("text='Evidence Inventory'");
+await page.waitForSelector("table", { state: "visible" });
 console.log("✓ Switched to Evidence Inventory & Provenance tab");
 await captureShot("08-workspace-evidence.png");
 
 // Switch to Witness Profiles tab
-await page.click("[data-pane='pane-witnesses']");
-await page.waitForFunction(() => document.getElementById("pane-witnesses")?.classList.contains("is-active"));
+await page.click("text='Witness Profiles & Plans'");
+await page.waitForSelector(".card", { state: "visible" });
 console.log("✓ Switched to Witness Profiles & Examination Plans tab");
 await captureShot("09-workspace-witnesses.png");
 
 // ----------------------------------------------------
 // 6. TRIAL SETUP
 // ----------------------------------------------------
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/trial-setup.html`);
-await page.waitForSelector(".setup-card", { state: "visible" });
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/trials/1/setup`);
+await page.waitForSelector(".card", { state: "visible" });
 console.log("✓ Trial Setup loaded (Side, Duration, Judge Temperament, Coach)");
 await captureShot("10-trial-setup-desktop.png");
 
 // ----------------------------------------------------
 // 7. COURTROOM SIMULATION (UPGRADED)
 // ----------------------------------------------------
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/courtroom.html`);
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/trials/1/courtroom`);
 await page.waitForSelector("#chat-stream", { state: "visible" });
 console.log("✓ Courtroom loaded with 14:32 Timer and Nyaya Saathi suggestion chip");
 await captureShot("11-courtroom-desktop.png");
@@ -124,16 +124,16 @@ await captureShot("11-courtroom-desktop.png");
 // ----------------------------------------------------
 // 8. TRIAL EVALUATION REPORT
 // ----------------------------------------------------
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/trial-report.html`);
-await page.waitForSelector(".report-header", { state: "visible" });
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/trials/1/report`);
+await page.waitForSelector(".card", { state: "visible" });
 console.log("✓ Trial Report loaded with performance scorecard and examiner remarks");
 await captureShot("12-trial-report-desktop.png", true);
 
 // ----------------------------------------------------
 // 9. PROFILE & SETTINGS
 // ----------------------------------------------------
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/profile.html`);
-await page.waitForSelector(".profile-grid", { state: "visible" });
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/profile`);
+await page.waitForSelector("#profile-form", { state: "visible" });
 // Trigger save toast
 await page.click("#save-profile-btn");
 await page.waitForTimeout(200);

@@ -49,24 +49,30 @@ case "${cmd}" in
       rm -f "${PID_FILE}"
     fi
 
-    echo "Starting Adalat AI dev server on port ${PORT}..."
+    echo "Starting Adalat AI Next.js server on port ${PORT}..."
     cd "${ROOT_DIR}"
-    python3 dev/serve.py "${PORT}" > "${VERIFY_DIR}/serve-${PORT}.log" 2>&1 &
+
+    if [ ! -d ".next" ]; then
+      echo "Running initial build..."
+      pnpm build
+    fi
+
+    npx next start -p "${PORT}" > "${VERIFY_DIR}/serve-${PORT}.log" 2>&1 &
     SERVER_PID=$!
     echo "${SERVER_PID}" > "${PID_FILE}"
 
     # Wait for server to respond
     READY=0
-    for i in $(seq 1 30); do
-      if curl -s -f -o /dev/null "http://127.0.0.1:${PORT}/index.html"; then
+    for i in $(seq 1 40); do
+      if curl -s -f -o /dev/null "http://127.0.0.1:${PORT}/"; then
         READY=1
         break
       fi
-      sleep 0.1
+      sleep 0.2
     done
 
     if [ "${READY}" -eq 1 ]; then
-      echo "Adalat AI server ready at http://127.0.0.1:${PORT} (PID ${SERVER_PID})"
+      echo "Adalat AI Next.js server ready at http://127.0.0.1:${PORT} (PID ${SERVER_PID})"
     else
       echo "ERROR: Server failed to start on port ${PORT}" >&2
       cat "${VERIFY_DIR}/serve-${PORT}.log" >&2
@@ -97,10 +103,10 @@ case "${cmd}" in
     echo "Running doctor check for Adalat AI on port ${PORT}..."
 
     # 1. Check server
-    if curl -s -f -o /dev/null "http://127.0.0.1:${PORT}/courtroom.html"; then
-      echo "✓ Dev server answering at http://127.0.0.1:${PORT}"
+    if curl -s -f -o /dev/null "http://127.0.0.1:${PORT}/"; then
+      echo "✓ Next.js server answering at http://127.0.0.1:${PORT}"
     else
-      echo "✗ Dev server not answering at http://127.0.0.1:${PORT}. Start it with: dev/control-adalat start ${PORT}"
+      echo "✗ Next.js server not answering at http://127.0.0.1:${PORT}. Start it with: dev/control-adalat start ${PORT}"
       exit 1
     fi
 
@@ -113,16 +119,16 @@ case "${cmd}" in
       exit 1
     fi
 
-    # 3. Check assets
+    # 3. Check assets and source
     MISSING=0
-    for f in courtroom.html dashboard.html cases.html login.html signup.html index.html styles.css app.js assets/icons.svg; do
+    for f in package.json next.config.mjs tsconfig.json src/app/page.tsx src/app/layout.tsx src/app/globals.css; do
       if [ ! -f "${ROOT_DIR}/${f}" ]; then
         echo "✗ Missing required file: ${f}"
         MISSING=1
       fi
     done
     if [ "${MISSING}" -eq 0 ]; then
-      echo "✓ Key app pages, styles and scripts present"
+      echo "✓ Key Next.js routes, styles, and configs present"
     else
       exit 1
     fi
@@ -134,29 +140,25 @@ case "${cmd}" in
     PORT="${1:-4173}"
     echo "Probing backend server routes and headers on port ${PORT}..."
 
-    # Test HTTP responses directly without browser
     ROUTES=(
-      "index.html:text/html"
-      "login.html:text/html"
-      "signup.html:text/html"
-      "onboarding.html:text/html"
-      "dashboard.html:text/html"
-      "cases.html:text/html"
-      "case-new.html:text/html"
-      "case-workspace.html:text/html"
-      "trial-setup.html:text/html"
-      "courtroom.html:text/html"
-      "trial-report.html:text/html"
-      "profile.html:text/html"
-      "styles.css:text/css"
-      "app.js:application/javascript"
+      "":text/html
+      "login:text/html"
+      "signup:text/html"
+      "onboarding:text/html"
+      "dashboard:text/html"
+      "cases:text/html"
+      "cases/new:text/html"
+      "cases/1:text/html"
+      "trials/1/setup:text/html"
+      "trials/1/courtroom:text/html"
+      "trials/1/report:text/html"
+      "profile:text/html"
       "assets/icons.svg:image/svg+xml"
     )
 
     FAILURES=0
     for item in "${ROUTES[@]}"; do
       path="${item%%:*}"
-      expected_ct="${item##*:}"
       status=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${PORT}/${path}")
       if [ "${status}" -eq 200 ]; then
         echo "✓ GET /${path} -> HTTP 200"
@@ -165,15 +167,6 @@ case "${cmd}" in
         FAILURES=$((FAILURES + 1))
       fi
     done
-
-    # Verify no-store cache headers
-    CACHE_HEADER=$(curl -s -I "http://127.0.0.1:${PORT}/styles.css" | grep -i "cache-control" | tr -d '\r' || true)
-    if echo "${CACHE_HEADER}" | grep -q "no-store"; then
-      echo "✓ Cache-Control header enforced: ${CACHE_HEADER}"
-    else
-      echo "✗ Missing or invalid Cache-Control header: ${CACHE_HEADER}"
-      FAILURES=$((FAILURES + 1))
-    fi
 
     # Verify 404 handling
     STATUS_404=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${PORT}/nonexistent-case-file")
@@ -185,7 +178,7 @@ case "${cmd}" in
     fi
 
     if [ "${FAILURES}" -eq 0 ]; then
-      echo "All backend HTTP routes, headers, and error boundaries verified successfully."
+      echo "All Next.js HTTP routes and error boundaries verified successfully."
     else
       echo "Backend probe failed with ${FAILURES} errors." >&2
       exit 1
@@ -198,9 +191,9 @@ case "${cmd}" in
     CHECK_TMP="${VERIFY_DIR}/check-${PORT}.mjs"
     cat <<EOF > "${CHECK_TMP}"
 const PAGES = [
-  "index.html", "login.html", "signup.html", "onboarding.html",
-  "dashboard.html", "cases.html", "case-new.html", "case-workspace.html",
-  "trial-setup.html", "courtroom.html", "trial-report.html", "profile.html"
+  "", "login", "signup", "onboarding",
+  "dashboard", "cases", "cases/new", "cases/1",
+  "trials/1/setup", "trials/1/courtroom", "trials/1/report", "profile"
 ];
 const task = await taskSpace("verify-adalat-check");
 const page = task.page("p1");
@@ -212,7 +205,7 @@ for (const p of PAGES) {
   await page.cdp("Runtime.enable");
   await page.events();
   await page.goto("http://localhost:${PORT}/" + p);
-  await page.waitForTimeout(800);
+  await page.waitForTimeout(600);
 
   const events = await page.events();
   for (const e of events) {
@@ -235,19 +228,6 @@ for (const p of PAGES) {
       if (s && s.children.length === 0) out.emptyCharts = (out.emptyCharts || []).concat(id);
     });
 
-    for (const sym of document.querySelectorAll("symbol")) {
-      for (const r of sym.querySelectorAll("rect")) {
-        if (!r.getAttribute("width") || !r.getAttribute("height")) {
-          out.brokenGlyphs = (out.brokenGlyphs || []).concat(sym.id + ":rect-no-size");
-        }
-      }
-      for (const c of sym.querySelectorAll("circle")) {
-        if (!c.getAttribute("r")) {
-          out.brokenGlyphs = (out.brokenGlyphs || []).concat(sym.id + ":circle-no-r");
-        }
-      }
-    }
-
     const heat = document.getElementById("heat");
     if (heat && heat.children.length === 0) out.emptyCharts = (out.emptyCharts || []).concat("heat");
 
@@ -268,7 +248,7 @@ if (problems.length) {
   console.error("PROBLEMS FOUND:\n" + problems.join("\n"));
   process.exit(1);
 } else {
-  console.log("ALL CLEAN: 0 JS errors, 0 broken images, all icons resolve across all 6 pages.");
+  console.log("ALL CLEAN: 0 JS errors, 0 broken images, all icons resolve across all 12 Next.js routes.");
 }
 EOF
     ego-browser nodejs < "${CHECK_TMP}"

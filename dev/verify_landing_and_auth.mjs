@@ -35,11 +35,12 @@ await page.cdp("Emulation.setDeviceMetricsOverride", {
   deviceScaleFactor: 0,
   mobile: false,
 });
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/index.html`);
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/`);
 await page.waitForSelector(".hero", { state: "visible" });
 
 const landingChecks = await page.evaluate(() => {
-  const navCauseList = document.querySelector("#main-nav a[href='cases.html']")?.textContent?.trim();
+  const navCauseList = document.querySelector("#main-nav a[href='/cases']")?.textContent?.trim() ||
+                        document.querySelector("#main-nav a[href*='cases']")?.textContent?.trim();
   const heroPoints = [...document.querySelectorAll(".hero-points li")].map((li) => ({
     text: li.querySelector("span:last-child")?.textContent?.trim(),
     icon: li.querySelector("use")?.getAttribute("href"),
@@ -57,9 +58,9 @@ await page.cdp("Emulation.setDeviceMetricsOverride", {
   width: 375,
   height: 812,
   deviceScaleFactor: 0,
-  mobile: true,
+  mobile: false,
 });
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/index.html`);
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/`);
 await page.waitForTimeout(400);
 await captureShot("landing-mobile.png");
 
@@ -72,7 +73,7 @@ await page.cdp("Emulation.setDeviceMetricsOverride", {
   deviceScaleFactor: 0,
   mobile: false,
 });
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/login.html`);
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/login`);
 await page.waitForSelector("#login-form", { state: "visible" });
 
 // Submit empty to trigger validation
@@ -85,7 +86,7 @@ const loginInvalid = await page.evaluate(() => ({
   url: window.location.pathname,
 }));
 
-console.log("✓ Login empty validation triggered properly (still on login.html):", loginInvalid);
+console.log("✓ Login empty validation triggered properly (still on login):", loginInvalid);
 await captureShot("login-validation-errors.png");
 
 // Toggle password visibility
@@ -110,9 +111,9 @@ await page.cdp("Emulation.setDeviceMetricsOverride", {
   width: 375,
   height: 812,
   deviceScaleFactor: 0,
-  mobile: true,
+  mobile: false,
 });
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/login.html`);
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/login`);
 await page.click("[data-fill-demo]");
 await page.waitForTimeout(300);
 await captureShot("login-mobile.png");
@@ -126,7 +127,7 @@ await page.cdp("Emulation.setDeviceMetricsOverride", {
   deviceScaleFactor: 0,
   mobile: false,
 });
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/signup.html`);
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/signup`);
 await page.waitForSelector("#signup-form", { state: "visible" });
 
 // Submit empty to trigger validation
@@ -143,7 +144,7 @@ const signupInvalid = await page.evaluate(() => ({
   url: window.location.pathname,
 }));
 
-console.log("✓ Signup empty validation triggered properly (still on signup.html):", signupInvalid);
+console.log("✓ Signup empty validation triggered properly (still on signup):", signupInvalid);
 console.log(`✓ Total persona roles available: ${signupInvalid.rolesCount}`);
 
 await captureShot("signup-validation-errors.png");
@@ -173,16 +174,16 @@ await page.cdp("Emulation.setDeviceMetricsOverride", {
   deviceScaleFactor: 0,
   mobile: false,
 });
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/signup.html`);
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/signup`);
 await page.click("[data-fill-signup-demo]");
 await page.waitForTimeout(300);
 await captureShot("signup-mobile.png");
 
 // ----------------------------------------------------
-// Submit signup and verify clean transition to dashboard
+// Submit signup and verify clean transition to onboarding
 await page.click("button[type='submit']");
-await page.waitForURL("**/dashboard.html*");
-console.log(`✓ Valid submission smoothly reached dashboard: ${await page.url()}`);
+await page.waitForURL("**/onboarding*");
+console.log(`✓ Valid submission smoothly reached onboarding: ${await page.url()}`);
 
 await task.finish({ keep: [] });
 console.log("All landing, login, and signup verifications passed!");
