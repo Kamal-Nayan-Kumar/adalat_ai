@@ -10,7 +10,7 @@ const TMP_DIR = "/tmp/adalat-verify/auth";
 await fs.mkdir(ARTIFACTS_DIR, { recursive: true });
 await fs.mkdir(TMP_DIR, { recursive: true });
 
-console.log(`Driving auth onboarding verification on http://127.0.0.1:${TARGET_PORT}/signup.html...`);
+console.log(`Driving auth onboarding verification on http://127.0.0.1:${TARGET_PORT}/signup...`);
 
 const task = await taskSpace("verify-auth-proof");
 const page = task.page("p1");
@@ -33,7 +33,7 @@ async function captureShot(filename) {
 }
 
 // 1. Open signup page
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/signup.html`);
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/signup`);
 await page.waitForSelector(".auth-form", { state: "visible" });
 
 // 2. Select Judiciary Aspirant role
@@ -54,18 +54,18 @@ await page.click("#terms");
 await captureShot("signup-form-filled.png");
 console.log("✓ Registration fields filled");
 
-// 4. Submit form and verify navigation to dashboard
+// 4. Submit form and verify navigation to onboarding
 await page.click("button[type='submit']");
-await page.waitForURL("**/dashboard.html*");
-console.log(`✓ Navigation to dashboard succeeded: ${await page.url()}`);
+await page.waitForURL("**/onboarding*");
+console.log(`✓ Navigation to onboarding succeeded: ${await page.url()}`);
 
 // 5. Test login page flow
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/login.html`);
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/login`);
 await page.waitForSelector(".auth-form", { state: "visible" });
 await page.fill("#email", "aarav@example.com");
 await page.fill("#password", "Practice2026!");
 await page.click("button[type='submit']");
-await page.waitForURL("**/dashboard.html*");
+await page.waitForURL("**/dashboard*");
 console.log(`✓ Login flow submission navigated to: ${await page.url()}`);
 
 // Save JSON evidence receipt

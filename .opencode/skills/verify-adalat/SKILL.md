@@ -1,6 +1,6 @@
 ---
 name: verify-adalat
-description: Drive and verify the Adalat AI courtroom simulator and advocacy platform using ego-browser. Use when testing live courtroom proceedings, cause-list search and filters, dashboard metrics and charts, auth flows, and visual responsiveness.
+description: Drive and verify the Adalat AI courtroom simulator and advocacy platform using ego-browser. Use when testing live courtroom proceedings, cause-list search and filters, dashboard metrics and charts, auth flows, case workspaces, and visual responsiveness.
 ---
 
 # Verify Adalat AI
@@ -9,13 +9,13 @@ This skill provides an automated, reproducible way to launch, inspect, drive, an
 
 ## Launch
 
-Start the Adalat AI dev server in the background:
+Start the Adalat AI Next.js server in the background:
 
 ```bash
 ./dev/control-adalat start 4173
 ```
 
-The script boots `python3 dev/serve.py 4173` with caching disabled (`Cache-Control: no-store`), saves the server PID to `.verify/serve-4173.pid`, and polls `http://127.0.0.1:4173/index.html` until it returns HTTP 200.
+The script builds (if needed) and boots the Next.js server on port 4173, saves the server PID to `.verify/serve-4173.pid`, and polls `http://127.0.0.1:4173/` until it returns HTTP 200.
 
 To teardown the server after a verification run:
 
@@ -32,33 +32,33 @@ Before running tests, verify the instance and environment are healthy:
 ```
 
 This read-only check confirms:
-1. The server responds on `http://127.0.0.1:4173/courtroom.html`.
+1. The Next.js server responds on `http://127.0.0.1:4173/`.
 2. `ego-browser` is installed and operational.
-3. All static files (`courtroom.html`, `dashboard.html`, `cases.html`, `login.html`, `signup.html`, `index.html`, `styles.css`, `app.js`, `assets/icons.svg`) exist.
+3. Core Next.js configs, components, and routes exist.
 
-Also verify baseline page integrity across all 6 pages:
+Also verify baseline page integrity across all 12 routes:
 
 ```bash
 ./dev/control-adalat check 4173
 ```
 
-This verifies 0 uncaught JavaScript runtime exceptions, 0 broken images, 0 collapsed SVGs, and that all `<use href="#id">` icons resolve against the sprite.
+This verifies 0 uncaught JavaScript runtime exceptions, 0 broken images, 0 collapsed SVGs, and that all `<use href="#id">` icons resolve against the sprite across all routes.
 
 ## Drive
 
 Drive user actions using `ego-browser nodejs`. Always target stable ARIA roles, labels, text content, and IDs.
 
 ### 1. Courtroom simulation
-- **Location:** `http://127.0.0.1:4173/courtroom.html`
+- **Location:** `http://127.0.0.1:4173/trials/1/courtroom`
 - **Submission textbox:** `input#composer-input` or `loc=role:textbox[name='Your submission']`
 - **Send button:** `button#composer-send` or `loc=role:button[name='Send']`
-- **Pre-set chips:** `.chip-btn` with `data-say` attributes ("Objection", "Tender exhibit", "Permission gate", "Reserve")
+- **Pre-set chips:** `.chip-btn` (Nyaya Saathi hint, Objection, Tender exhibit, Permission gate, Reserve)
 - **Proceedings stream:** `#chat-stream` containing `.msg.is-you` and `.msg.is-judge`
 - **Stage status:** `#stage-status`
 - **Verdict modal:** trigger `button#open-verdict`, modal `#verdict[role='dialog']`, dismiss `[data-close]`
 
 ### 2. Cause list and filters
-- **Location:** `http://127.0.0.1:4173/cases.html`
+- **Location:** `http://127.0.0.1:4173/cases`
 - **Search input:** `input#case-search` or `loc=role:searchbox[name='Search cases']`
 - **Filter selects:** `select[data-filter='court']`, `select[data-filter='category']`, `select[data-filter='regime']`
 - **Count badge:** `#case-count` (e.g. `9 cases`, `1 case`)
@@ -66,7 +66,7 @@ Drive user actions using `ego-browser nodejs`. Always target stable ARIA roles, 
 - **Zero-match card:** `#case-empty`
 
 ### 3. Advocacy dashboard
-- **Location:** `http://127.0.0.1:4173/dashboard.html`
+- **Location:** `http://127.0.0.1:4173/dashboard`
 - **KPIs:** `.kpi .kpi-val` (Sessions completed `23`, Average score `7.8`, Streak `9`, Cases won `11`)
 - **Trend chart:** `svg#chart-trend` (contains lines, area fill, value labels)
 - **Radar chart:** `svg#chart-radar` (contains polygon, axis labels for 6 skills)
@@ -74,10 +74,17 @@ Drive user actions using `ego-browser nodejs`. Always target stable ARIA roles, 
 - **Heatmap:** `#heat i[data-l]` (119 activity tiles)
 
 ### 4. Auth & Onboarding
-- **Location:** `http://127.0.0.1:4173/signup.html` & `login.html`
+- **Location:** `http://127.0.0.1:4173/signup`, `/login`, `/onboarding`
 - **Inputs:** `#first`, `#last`, `#email`, `#password`
-- **Role radios:** `input[name='role'][value='student|aspirant|advocate|academic']`
-- **Form submission:** `button[type='submit']` navigates to `dashboard.html`
+- **Role radios:** `input[name='role'][value='student|aspirant|advocate|college']`
+- **Form submission:** `button[type='submit']` navigates to `/onboarding` or `/dashboard`
+
+### 5. Case Workspaces & Trial Setup
+- **New Workspace:** `http://127.0.0.1:4173/cases/new` (Public, Upload, Training)
+- **Case Workspace:** `http://127.0.0.1:4173/cases/1` (Theory, Research, Evidence, Witnesses)
+- **Trial Setup:** `http://127.0.0.1:4173/trials/1/setup` (Side, Duration, Judge temperament, Coach)
+- **Trial Report:** `http://127.0.0.1:4173/trials/1/report` (Scorecard, timeline, examiner remarks)
+- **Profile:** `http://127.0.0.1:4173/profile` (Preferences, target exams, privacy)
 
 ## Evidence
 
@@ -98,10 +105,10 @@ Always tear down resources when verification concludes:
 
 ## Helpers
 
-- `dev/control-adalat start [port]`: Boots server in background and awaits HTTP 200.
+- `dev/control-adalat start [port]`: Boots Next.js server in background and awaits HTTP 200.
 - `dev/control-adalat stop [port]`: Gracefully stops the background server.
 - `dev/control-adalat doctor [port]`: Runs read-only environment and connectivity health checks.
-- `dev/control-adalat probe [port]`: Tests server/backend HTTP status codes, no-cache headers, and 404 boundaries directly.
-- `dev/control-adalat check [port]`: Runs headless page integrity check for JS errors and icon resolutions.
+- `dev/control-adalat probe [port]`: Tests server/backend HTTP status codes, routes, and 404 boundaries directly.
+- `dev/control-adalat check [port]`: Runs headless page integrity check for JS errors and icon resolutions across all 12 routes.
 - `dev/control-adalat drive <script.mjs> [port]`: Executes a custom verification script via ego-browser.
-- `dev/control-adalat shot <page> <dest> [width] [port]`: Captures a screenshot of a specific page.
+- `dev/control-adalat shot <page> <dest> [width] [port]`: Captures a screenshot of a specific route.

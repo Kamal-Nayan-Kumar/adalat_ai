@@ -10,7 +10,7 @@ const TMP_DIR = "/tmp/adalat-verify/cases";
 await fs.mkdir(ARTIFACTS_DIR, { recursive: true });
 await fs.mkdir(TMP_DIR, { recursive: true });
 
-console.log(`Driving cause list verification on http://127.0.0.1:${TARGET_PORT}/cases.html...`);
+console.log(`Driving cause list verification on http://127.0.0.1:${TARGET_PORT}/cases...`);
 
 const task = await taskSpace("verify-cases-proof");
 const page = task.page("p1");
@@ -34,7 +34,7 @@ async function captureShot(filename) {
 }
 
 // 1. Open cause list
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/cases.html`);
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/cases`);
 await page.waitForSelector(".case-grid", { state: "visible" });
 
 const initialCount = await page.evaluate(() => {

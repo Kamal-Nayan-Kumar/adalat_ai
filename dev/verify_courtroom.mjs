@@ -11,7 +11,7 @@ const TMP_DIR = "/tmp/adalat-verify/courtroom";
 await fs.mkdir(ARTIFACTS_DIR, { recursive: true });
 await fs.mkdir(TMP_DIR, { recursive: true });
 
-console.log(`Driving courtroom verification on http://127.0.0.1:${TARGET_PORT}/courtroom.html...`);
+console.log(`Driving courtroom verification on http://127.0.0.1:${TARGET_PORT}/trials/1/courtroom...`);
 
 const task = await taskSpace("verify-courtroom-proof");
 const page = task.page("p1");
@@ -26,7 +26,7 @@ await page.cdp("Emulation.setDeviceMetricsOverride", {
 });
 
 // 1. Open courtroom page
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/courtroom.html`);
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/trials/1/courtroom`);
 await page.waitForSelector("#chat-stream", { state: "visible" });
 console.log("✓ Courtroom page loaded successfully");
 

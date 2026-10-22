@@ -10,7 +10,7 @@ const TMP_DIR = "/tmp/adalat-verify/dashboard";
 await fs.mkdir(ARTIFACTS_DIR, { recursive: true });
 await fs.mkdir(TMP_DIR, { recursive: true });
 
-console.log(`Driving dashboard verification on http://127.0.0.1:${TARGET_PORT}/dashboard.html...`);
+console.log(`Driving dashboard verification on http://127.0.0.1:${TARGET_PORT}/dashboard...`);
 
 const task = await taskSpace("verify-dashboard-proof");
 const page = task.page("p1");
@@ -32,7 +32,7 @@ async function captureShot(filename) {
   return destPath;
 }
 
-await page.goto(`http://127.0.0.1:${TARGET_PORT}/dashboard.html`);
+await page.goto(`http://127.0.0.1:${TARGET_PORT}/dashboard`);
 await page.waitForSelector("#chart-trend", { state: "visible" });
 await page.waitForTimeout(600); // Allow charts to draw
 
