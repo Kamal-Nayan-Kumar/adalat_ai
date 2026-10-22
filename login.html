@@ -258,22 +258,30 @@
       <h1>Welcome back</h1>
       <p>Log in to continue your courtroom practice.</p>
 
-      <form action="dashboard.html" method="get" novalidate>
+      <div class="auth-demo-hint">
+        <span><strong>Testing?</strong> Fill demo student account</span>
+        <button type="button" data-fill-demo>Fill demo</button>
+      </div>
+
+      <form action="dashboard.html" method="get" novalidate id="login-form">
 
         <div class="field">
           <label for="email">Email address</label>
           <div class="input-wrap">
             <svg class="ic is-sm"><use href="#i-mail"/></svg>
-            <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+            <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" required aria-describedby="email-error">
           </div>
+          <p class="hint is-error" id="email-error">Please enter a valid email address.</p>
         </div>
 
         <div class="field">
           <label for="password">Password</label>
           <div class="input-wrap">
             <svg class="ic is-sm"><use href="#i-lock"/></svg>
-            <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+            <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required aria-describedby="pwd-error">
+            <button type="button" class="pwd-toggle" aria-label="Toggle password visibility" data-toggle-pwd="password">Show</button>
           </div>
+          <p class="hint is-error" id="pwd-error">Please enter your password.</p>
           <p class="hint"><a class="link" href="#">Forgot password?</a></p>
         </div>
 

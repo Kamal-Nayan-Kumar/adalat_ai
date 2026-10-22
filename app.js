@@ -349,4 +349,192 @@
       if (e.key === 'Escape' && !modal.hidden) modal.hidden = true;
     });
   }
+
+  /* ---------- auth validation & interaction ---------- */
+  // Password visibility toggle
+  document.querySelectorAll('[data-toggle-pwd]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var id = btn.getAttribute('data-toggle-pwd');
+      var field = document.getElementById(id);
+      if (!field) return;
+      var isPw = field.type === 'password';
+      field.type = isPw ? 'text' : 'password';
+      btn.textContent = isPw ? 'Hide' : 'Show';
+      btn.setAttribute('aria-label', isPw ? 'Hide password' : 'Show password');
+    });
+  });
+
+  // Password strength meter
+  var pwdInput = document.querySelector('#signup-form #password');
+  var pwdMeter = document.getElementById('pwd-meter');
+  if (pwdInput && pwdMeter) {
+    pwdInput.addEventListener('input', function () {
+      var val = pwdInput.value;
+      if (!val) {
+        pwdMeter.classList.remove('is-visible');
+        pwdMeter.setAttribute('data-strength', 'none');
+        return;
+      }
+      pwdMeter.classList.add('is-visible');
+      var hasLen = val.length >= 8;
+      var hasNum = /\d/.test(val);
+      var hasSpecialOrUpper = /[A-Z!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(val);
+
+      if (hasLen && hasNum && hasSpecialOrUpper) {
+        pwdMeter.setAttribute('data-strength', 'strong');
+      } else if (hasLen && (hasNum || hasSpecialOrUpper)) {
+        pwdMeter.setAttribute('data-strength', 'medium');
+      } else {
+        pwdMeter.setAttribute('data-strength', 'weak');
+      }
+    });
+  }
+
+  // Demo autofill buttons
+  var fillLoginBtn = document.querySelector('[data-fill-demo]');
+  if (fillLoginBtn) {
+    fillLoginBtn.addEventListener('click', function () {
+      var em = document.getElementById('email');
+      var pw = document.getElementById('password');
+      if (em) { em.value = 'aarav@example.com'; em.removeAttribute('aria-invalid'); }
+      if (pw) { pw.value = 'Practice2026!'; pw.removeAttribute('aria-invalid'); }
+    });
+  }
+
+  var fillSignupBtn = document.querySelector('[data-fill-signup-demo]');
+  if (fillSignupBtn) {
+    fillSignupBtn.addEventListener('click', function () {
+      var f = document.getElementById('first');
+      var l = document.getElementById('last');
+      var em = document.getElementById('email');
+      var pw = document.getElementById('password');
+      var t = document.getElementById('terms');
+      var asp = document.querySelector('input[name="role"][value="aspirant"]');
+
+      if (f) { f.value = 'Aarav'; f.removeAttribute('aria-invalid'); }
+      if (l) { l.value = 'Sharma'; l.removeAttribute('aria-invalid'); }
+      if (em) { em.value = 'aarav@example.com'; em.removeAttribute('aria-invalid'); }
+      if (pw) {
+        pw.value = 'Practice2026!';
+        pw.removeAttribute('aria-invalid');
+        if (pwdMeter) {
+          pwdMeter.classList.add('is-visible');
+          pwdMeter.setAttribute('data-strength', 'strong');
+        }
+      }
+      if (t) { t.checked = true; t.removeAttribute('aria-invalid'); }
+      if (asp) asp.checked = true;
+    });
+  }
+
+  // Helper: email regex
+  function isValidEmail(str) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str.trim());
+  }
+
+  // Login form validation
+  var loginForm = document.getElementById('login-form');
+  if (loginForm) {
+    var loginEmail = document.getElementById('email');
+    var loginPassword = document.getElementById('password');
+
+    function checkLoginField(input, valid) {
+      if (valid) {
+        input.removeAttribute('aria-invalid');
+      } else {
+        input.setAttribute('aria-invalid', 'true');
+      }
+      return valid;
+    }
+
+    if (loginEmail) {
+      loginEmail.addEventListener('input', function () {
+        if (loginEmail.hasAttribute('aria-invalid')) {
+          checkLoginField(loginEmail, isValidEmail(loginEmail.value));
+        }
+      });
+    }
+    if (loginPassword) {
+      loginPassword.addEventListener('input', function () {
+        if (loginPassword.hasAttribute('aria-invalid')) {
+          checkLoginField(loginPassword, Boolean(loginPassword.value.trim()));
+        }
+      });
+    }
+
+    loginForm.addEventListener('submit', function (e) {
+      var okEmail = checkLoginField(loginEmail, isValidEmail(loginEmail.value));
+      var okPass = checkLoginField(loginPassword, Boolean(loginPassword.value.trim()));
+
+      if (!okEmail || !okPass) {
+        e.preventDefault();
+        var firstBad = !okEmail ? loginEmail : loginPassword;
+        if (firstBad) firstBad.focus();
+      }
+    });
+  }
+
+  // Signup form validation
+  var signupForm = document.getElementById('signup-form');
+  if (signupForm) {
+    var sFirst = document.getElementById('first');
+    var sLast = document.getElementById('last');
+    var sEmail = document.getElementById('email');
+    var sPass = document.getElementById('password');
+    var sTerms = document.getElementById('terms');
+
+    function checkField(input, valid) {
+      if (valid) {
+        input.removeAttribute('aria-invalid');
+      } else {
+        input.setAttribute('aria-invalid', 'true');
+      }
+      return valid;
+    }
+
+    [sFirst, sLast].forEach(function (f) {
+      if (f) {
+        f.addEventListener('input', function () {
+          if (f.hasAttribute('aria-invalid')) checkField(f, Boolean(f.value.trim()));
+        });
+      }
+    });
+
+    if (sEmail) {
+      sEmail.addEventListener('input', function () {
+        if (sEmail.hasAttribute('aria-invalid')) checkField(sEmail, isValidEmail(sEmail.value));
+      });
+    }
+
+    if (sPass) {
+      sPass.addEventListener('input', function () {
+        if (sPass.hasAttribute('aria-invalid')) {
+          var val = sPass.value;
+          var valid = val.length >= 8 && /\d/.test(val);
+          checkField(sPass, valid);
+        }
+      });
+    }
+
+    if (sTerms) {
+      sTerms.addEventListener('change', function () {
+        if (sTerms.hasAttribute('aria-invalid')) checkField(sTerms, sTerms.checked);
+      });
+    }
+
+    signupForm.addEventListener('submit', function (e) {
+      var okF = checkField(sFirst, Boolean(sFirst.value.trim()));
+      var okL = checkField(sLast, Boolean(sLast.value.trim()));
+      var okE = checkField(sEmail, isValidEmail(sEmail.value));
+      var pVal = sPass.value;
+      var okP = checkField(sPass, pVal.length >= 8 && /\d/.test(pVal));
+      var okT = checkField(sTerms, sTerms.checked);
+
+      if (!okF || !okL || !okE || !okP || !okT) {
+        e.preventDefault();
+        var firstBad = !okF ? sFirst : (!okL ? sLast : (!okE ? sEmail : (!okP ? sPass : sTerms)));
+        if (firstBad) firstBad.focus();
+      }
+    });
+  }
 })();

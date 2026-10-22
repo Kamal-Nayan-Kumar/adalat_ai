@@ -388,7 +388,40 @@ svg{display:block}
 .field input:focus,.field select:focus{outline:0;border-color:var(--maroon);box-shadow:0 0 0 3px rgba(110,18,23,.1)}
 .field input[aria-invalid="true"]{border-color:#C0392B;box-shadow:0 0 0 3px rgba(192,57,43,.1)}
 .field .hint{margin-top:6px;font-size:12.5px;color:var(--muted)}
-.field .hint.is-error{color:#C0392B}
+.field .hint.is-error{color:#C0392B;display:none}
+.field input[aria-invalid="true"] ~ .hint.is-error,
+.field .input-wrap[data-invalid="true"] ~ .hint.is-error,
+.field:has([aria-invalid="true"]) .hint.is-error{display:block}
+.field:has([aria-invalid="true"]) .hint:not(.is-error){display:none}
+
+.field .input-wrap .pwd-toggle{
+  position:absolute;right:10px;background:none;border:0;color:var(--muted);
+  font-size:12.5px;font-weight:600;padding:6px 10px;border-radius:var(--r-xs);
+  cursor:pointer;line-height:1;transition:background .15s,color .15s;
+}
+.field .input-wrap .pwd-toggle:hover{color:var(--ink);background:rgba(0,0,0,.05)}
+.field .input-wrap:has(.pwd-toggle) input{padding-right:64px}
+
+.auth-demo-hint{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 14px;background:rgba(110,18,23,.04);border:1px solid rgba(110,18,23,.12);
+  border-radius:var(--r-sm);font-size:13px;color:var(--ink);margin-bottom:20px;
+}
+.auth-demo-hint strong{color:var(--maroon)}
+.auth-demo-hint button{
+  background:var(--maroon);color:#fff;border:0;border-radius:var(--r-xs);
+  padding:5px 11px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;
+  transition:background .15s;
+}
+.auth-demo-hint button:hover{background:var(--maroon-2)}
+
+.pwd-meter{display:none;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:6px;height:4px}
+.pwd-meter.is-visible{display:grid}
+.pwd-meter-bar{height:100%;background:var(--line);border-radius:2px;transition:background .2s}
+.pwd-meter[data-strength="weak"] .pwd-meter-bar:nth-child(1){background:#C0392B}
+.pwd-meter[data-strength="medium"] .pwd-meter-bar:nth-child(1),
+.pwd-meter[data-strength="medium"] .pwd-meter-bar:nth-child(2){background:#D97706}
+.pwd-meter[data-strength="strong"] .pwd-meter-bar{background:#059669}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .check-row{display:flex;align-items:center;gap:10px;margin-top:18px;font-size:13.5px;color:var(--body)}
 .check-row input{width:17px;height:17px;accent-color:var(--maroon)}

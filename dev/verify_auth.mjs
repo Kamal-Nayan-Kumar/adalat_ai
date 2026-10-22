@@ -49,13 +49,14 @@ await page.fill("#first", "Aarav");
 await page.fill("#last", "Sharma");
 await page.fill("#email", "aarav@example.com");
 await page.fill("#password", "Practice2026!");
+await page.click("#terms");
 
 await captureShot("signup-form-filled.png");
 console.log("✓ Registration fields filled");
 
 // 4. Submit form and verify navigation to dashboard
 await page.click("button[type='submit']");
-await page.waitForFunction(() => window.location.pathname.includes("dashboard.html"));
+await page.waitForURL("**/dashboard.html*");
 console.log(`✓ Navigation to dashboard succeeded: ${await page.url()}`);
 
 // 5. Test login page flow
@@ -64,7 +65,7 @@ await page.waitForSelector(".auth-form", { state: "visible" });
 await page.fill("#email", "aarav@example.com");
 await page.fill("#password", "Practice2026!");
 await page.click("button[type='submit']");
-await page.waitForFunction(() => window.location.pathname.includes("dashboard.html"));
+await page.waitForURL("**/dashboard.html*");
 console.log(`✓ Login flow submission navigated to: ${await page.url()}`);
 
 // Save JSON evidence receipt
