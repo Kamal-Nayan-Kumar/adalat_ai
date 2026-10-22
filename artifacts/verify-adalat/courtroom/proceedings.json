@@ -1,0 +1,60 @@
+{
+  "stageStatus": "Your turn",
+  "totalMessages": 9,
+  "messages": [
+    {
+      "who": "Judge AI",
+      "text": "The matter is called. Let the record state that the accused is present and the counsel for the State may proceed.",
+      "isYou": false,
+      "isJudge": true
+    },
+    {
+      "who": "Prosecution AI",
+      "text": "State calls PW1, the eyewitness. I offer PW1 for examination-in-chief.",
+      "isYou": false,
+      "isJudge": false
+    },
+    {
+      "who": "Judge AI",
+      "text": "PW1 is examined. Objections, counsel for the Defence?",
+      "isYou": false,
+      "isJudge": true
+    },
+    {
+      "who": "Witness AI",
+      "text": "I saw the accused near the bus stop at about 9:40 pm. The light from the shop was on. I did not recognise him at first.",
+      "isYou": false,
+      "isJudge": false
+    },
+    {
+      "who": "Judge AI",
+      "text": "Counsel, the witness has paused mid-answer. You may proceed with your cross-examination.",
+      "isYou": false,
+      "isJudge": true
+    },
+    {
+      "who": "You",
+      "text": "I object under Section 137 BSA — the question assumes facts not in evidence.",
+      "isYou": true,
+      "isJudge": false
+    },
+    {
+      "who": "Judge AI",
+      "text": "Noted. Let the record reflect that. Counsel, you may proceed.",
+      "isYou": false,
+      "isJudge": true
+    },
+    {
+      "who": "You",
+      "text": "I have an objection, Your Honour. The question is leading.",
+      "isYou": true,
+      "isJudge": false
+    },
+    {
+      "who": "Judge AI",
+      "text": "Noted. Let the record reflect that. Counsel, you may proceed.",
+      "isYou": false,
+      "isJudge": true
+    }
+  ]
+}

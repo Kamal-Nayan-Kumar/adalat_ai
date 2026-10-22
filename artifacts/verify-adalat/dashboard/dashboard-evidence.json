@@ -1,0 +1,27 @@
+{
+  "kpis": [
+    {
+      "label": "Sessions completed",
+      "val": "23"
+    },
+    {
+      "label": "Average score",
+      "val": "7.8"
+    },
+    {
+      "label": "Day streak",
+      "val": "9"
+    },
+    {
+      "label": "Cases won",
+      "val": "11"
+    }
+  ],
+  "chartStats": {
+    "trendElements": 28,
+    "radarElements": 23,
+    "barElements": 18,
+    "heatTiles": 119
+  },
+  "status": "verified"
+}

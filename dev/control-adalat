@@ -1,0 +1,305 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# dev/control-adalat — Verification CLI harness for Adalat AI
+# Drives dev server lifecycle and ego-browser automated verification.
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+VERIFY_DIR="${ROOT_DIR}/.verify"
+mkdir -p "${VERIFY_DIR}"
+
+DEFAULT_PORT=4173
+
+usage() {
+  cat <<'EOF'
+Usage: dev/control-adalat <command> [args...]
+
+Commands:
+  start [port]               Start dev/serve.py on [port] (default: 4173) in background
+  stop [port]                Stop dev server running on [port]
+  doctor [port]              Run health check on server and ego-browser
+  probe [port]               Verify backend/server HTTP responses, headers, and routes
+  check [port]               Verify pages for JS errors, missing icons and broken images
+  drive <script.mjs> [port]  Execute an ego-browser verification script
+  shot <page> <dest> [w] [p] Capture page screenshot at given width and port
+
+Examples:
+  dev/control-adalat start 4173
+  dev/control-adalat doctor 4173
+  dev/control-adalat check 4173
+  dev/control-adalat stop 4173
+EOF
+}
+
+cmd="${1:-help}"
+shift || true
+
+case "${cmd}" in
+  start)
+    PORT="${1:-${DEFAULT_PORT}}"
+    PID_FILE="${VERIFY_DIR}/serve-${PORT}.pid"
+
+    if [ -f "${PID_FILE}" ]; then
+      PID="$(cat "${PID_FILE}")"
+      if kill -0 "${PID}" 2>/dev/null; then
+        echo "Server already running on port ${PORT} (PID ${PID})"
+        exit 0
+      fi
+      rm -f "${PID_FILE}"
+    fi
+
+    echo "Starting Adalat AI dev server on port ${PORT}..."
+    cd "${ROOT_DIR}"
+    python3 dev/serve.py "${PORT}" > "${VERIFY_DIR}/serve-${PORT}.log" 2>&1 &
+    SERVER_PID=$!
+    echo "${SERVER_PID}" > "${PID_FILE}"
+
+    # Wait for server to respond
+    READY=0
+    for i in $(seq 1 30); do
+      if curl -s -f -o /dev/null "http://127.0.0.1:${PORT}/index.html"; then
+        READY=1
+        break
+      fi
+      sleep 0.1
+    done
+
+    if [ "${READY}" -eq 1 ]; then
+      echo "Adalat AI server ready at http://127.0.0.1:${PORT} (PID ${SERVER_PID})"
+    else
+      echo "ERROR: Server failed to start on port ${PORT}" >&2
+      cat "${VERIFY_DIR}/serve-${PORT}.log" >&2
+      kill "${SERVER_PID}" 2>/dev/null || true
+      rm -f "${PID_FILE}"
+      exit 1
+    fi
+    ;;
+
+  stop)
+    PORT="${1:-${DEFAULTPORT:-4173}}"
+    PORT="${1:-4173}"
+    PID_FILE="${VERIFY_DIR}/serve-${PORT}.pid"
+    if [ -f "${PID_FILE}" ]; then
+      PID="$(cat "${PID_FILE}")"
+      if kill -0 "${PID}" 2>/dev/null; then
+        kill "${PID}" 2>/dev/null || true
+        echo "Stopped server on port ${PORT} (PID ${PID})"
+      fi
+      rm -f "${PID_FILE}"
+    else
+      echo "No server PID file found for port ${PORT}"
+    fi
+    ;;
+
+  doctor)
+    PORT="${1:-4173}"
+    echo "Running doctor check for Adalat AI on port ${PORT}..."
+
+    # 1. Check server
+    if curl -s -f -o /dev/null "http://127.0.0.1:${PORT}/courtroom.html"; then
+      echo "✓ Dev server answering at http://127.0.0.1:${PORT}"
+    else
+      echo "✗ Dev server not answering at http://127.0.0.1:${PORT}. Start it with: dev/control-adalat start ${PORT}"
+      exit 1
+    fi
+
+    # 2. Check ego-browser
+    if command -v ego-browser >/dev/null 2>&1; then
+      EGO_VER="$(ego-browser --version 2>/dev/null || echo 'available')"
+      echo "✓ ego-browser found (${EGO_VER})"
+    else
+      echo "✗ ego-browser not found in PATH"
+      exit 1
+    fi
+
+    # 3. Check assets
+    MISSING=0
+    for f in courtroom.html dashboard.html cases.html login.html signup.html index.html styles.css app.js assets/icons.svg; do
+      if [ ! -f "${ROOT_DIR}/${f}" ]; then
+        echo "✗ Missing required file: ${f}"
+        MISSING=1
+      fi
+    done
+    if [ "${MISSING}" -eq 0 ]; then
+      echo "✓ Key app pages, styles and scripts present"
+    else
+      exit 1
+    fi
+
+    echo "Doctor check PASSED: Instance is healthy and ready to drive."
+    ;;
+
+  probe)
+    PORT="${1:-4173}"
+    echo "Probing backend server routes and headers on port ${PORT}..."
+
+    # Test HTTP responses directly without browser
+    ROUTES=(
+      "index.html:text/html"
+      "courtroom.html:text/html"
+      "dashboard.html:text/html"
+      "cases.html:text/html"
+      "login.html:text/html"
+      "signup.html:text/html"
+      "styles.css:text/css"
+      "app.js:application/javascript"
+      "assets/icons.svg:image/svg+xml"
+    )
+
+    FAILURES=0
+    for item in "${ROUTES[@]}"; do
+      path="${item%%:*}"
+      expected_ct="${item##*:}"
+      status=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${PORT}/${path}")
+      if [ "${status}" -eq 200 ]; then
+        echo "✓ GET /${path} -> HTTP 200"
+      else
+        echo "✗ GET /${path} -> HTTP ${status} (expected 200)"
+        FAILURES=$((FAILURES + 1))
+      fi
+    done
+
+    # Verify no-store cache headers
+    CACHE_HEADER=$(curl -s -I "http://127.0.0.1:${PORT}/styles.css" | grep -i "cache-control" | tr -d '\r' || true)
+    if echo "${CACHE_HEADER}" | grep -q "no-store"; then
+      echo "✓ Cache-Control header enforced: ${CACHE_HEADER}"
+    else
+      echo "✗ Missing or invalid Cache-Control header: ${CACHE_HEADER}"
+      FAILURES=$((FAILURES + 1))
+    fi
+
+    # Verify 404 handling
+    STATUS_404=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${PORT}/nonexistent-case-file")
+    if [ "${STATUS_404}" -eq 404 ]; then
+      echo "✓ GET /nonexistent-case-file -> HTTP 404 (proper error boundary)"
+    else
+      echo "✗ Unexpected status for missing route: ${STATUS_404}"
+      FAILURES=$((FAILURES + 1))
+    fi
+
+    if [ "${FAILURES}" -eq 0 ]; then
+      echo "All backend HTTP routes, headers, and error boundaries verified successfully."
+    else
+      echo "Backend probe failed with ${FAILURES} errors." >&2
+      exit 1
+    fi
+    ;;
+
+  check)
+    PORT="${1:-4173}"
+    echo "Running page integrity check on port ${PORT}..."
+    CHECK_TMP="${VERIFY_DIR}/check-${PORT}.mjs"
+    cat <<EOF > "${CHECK_TMP}"
+const PAGES = ["index.html", "login.html", "signup.html", "dashboard.html", "cases.html", "courtroom.html"];
+const task = await taskSpace("verify-adalat-check");
+const page = task.page("p1");
+await page.cdp("Network.enable");
+await page.cdp("Network.setCacheDisabled", { cacheDisabled: true });
+const problems = [];
+
+for (const p of PAGES) {
+  await page.cdp("Runtime.enable");
+  await page.events();
+  await page.goto("http://localhost:${PORT}/" + p);
+  await page.waitForTimeout(800);
+
+  const events = await page.events();
+  for (const e of events) {
+    if (e.method === "Runtime.exceptionThrown") {
+      const d = e.params.exceptionDetails;
+      problems.push(p + ": JS " + (d.exception?.description?.split("\n")[0] || d.text) + " (line " + d.lineNumber + ")");
+    }
+  }
+
+  const r = await page.evaluate(() => {
+    const out = {};
+    const ids = new Set([...document.querySelectorAll("symbol")].map((s) => s.id));
+    const missing = [...document.querySelectorAll(".ic use")]
+      .map((u) => u.getAttribute("href"))
+      .filter((h) => h && h.startsWith("#") && !ids.has(h.slice(1)));
+    out.missingIcons = [...new Set(missing)];
+
+    ["chart-trend", "chart-radar", "chart-bars"].forEach((id) => {
+      const s = document.getElementById(id);
+      if (s && s.children.length === 0) out.emptyCharts = (out.emptyCharts || []).concat(id);
+    });
+
+    for (const sym of document.querySelectorAll("symbol")) {
+      for (const r of sym.querySelectorAll("rect")) {
+        if (!r.getAttribute("width") || !r.getAttribute("height")) {
+          out.brokenGlyphs = (out.brokenGlyphs || []).concat(sym.id + ":rect-no-size");
+        }
+      }
+      for (const c of sym.querySelectorAll("circle")) {
+        if (!c.getAttribute("r")) {
+          out.brokenGlyphs = (out.brokenGlyphs || []).concat(sym.id + ":circle-no-r");
+        }
+      }
+    }
+
+    const heat = document.getElementById("heat");
+    if (heat && heat.children.length === 0) out.emptyCharts = (out.emptyCharts || []).concat("heat");
+
+    out.brokenImages = [...document.images]
+      .filter((i) => !i.complete || i.naturalWidth === 0)
+      .map((i) => i.getAttribute("src"));
+    return out;
+  });
+
+  for (const [k, v] of Object.entries(r)) {
+    if (Array.isArray(v) && v.length) problems.push(p + ": " + k + " -> " + v.join(", "));
+  }
+}
+
+await task.finish({ keep: [] });
+
+if (problems.length) {
+  console.error("PROBLEMS FOUND:\n" + problems.join("\n"));
+  process.exit(1);
+} else {
+  console.log("ALL CLEAN: 0 JS errors, 0 broken images, all icons resolve across all 6 pages.");
+}
+EOF
+    ego-browser nodejs < "${CHECK_TMP}"
+    rm -f "${CHECK_TMP}"
+    ;;
+
+  drive)
+    SCRIPT="${1:?Missing script file}"
+    PORT="${2:-4173}"
+    # Prepend workspace root and port constants so scripts have stable absolute paths
+    (echo "const WORKSPACE = \"${ROOT_DIR}\"; const PORT = ${PORT};"; cat "${SCRIPT}") | ego-browser nodejs
+    ;;
+
+  shot)
+    PAGE_NAME="${1:?Missing page name}"
+    OUT_PATH="${2:?Missing output path}"
+    WIDTH="${3:-1440}"
+    PORT="${4:-4173}"
+    mkdir -p "$(dirname "${OUT_PATH}")"
+    ABS_OUT="$(cd "$(dirname "${OUT_PATH}")" && pwd)/$(basename "${OUT_PATH}")"
+
+    SHOT_TMP="${VERIFY_DIR}/shot-${PORT}.mjs"
+    cat <<EOF > "${SHOT_TMP}"
+const task = await taskSpace("verify-adalat-shot");
+const page = task.page("p1");
+await page.cdp("Network.enable");
+await page.cdp("Network.setCacheDisabled", { cacheDisabled: true });
+await page.cdp("Emulation.setDeviceMetricsOverride", {
+  width: ${WIDTH}, height: 1000, deviceScaleFactor: 0, mobile: ${WIDTH} < 700,
+});
+await page.goto("http://localhost:${PORT}/${PAGE_NAME}");
+await page.waitForTimeout(800);
+await page.screenshot({ path: "${ABS_OUT}", fullPage: ${WIDTH} > 700 });
+await task.finish({ keep: [] });
+console.log("Screenshot saved to ${ABS_OUT}");
+EOF
+    ego-browser nodejs < "${SHOT_TMP}"
+    rm -f "${SHOT_TMP}"
+    ;;
+
+  help|*)
+    usage
+    ;;
+esac

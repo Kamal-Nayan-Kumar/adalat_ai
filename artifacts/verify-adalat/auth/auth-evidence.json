@@ -1,0 +1,6 @@
+{
+  "signupFlow": "verified",
+  "roleSelection": "aspirant",
+  "loginFlow": "verified",
+  "destinationUrl": "dashboard.html"
+}

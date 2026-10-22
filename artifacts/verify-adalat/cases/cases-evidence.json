@@ -1,0 +1,9 @@
+{
+  "totalCases": 9,
+  "searchTested": "murder",
+  "zeroStateVerified": true,
+  "filtersTested": [
+    "court=criminal",
+    "regime=new"
+  ]
+}
