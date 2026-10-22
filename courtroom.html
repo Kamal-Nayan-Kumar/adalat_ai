@@ -306,6 +306,7 @@
     <div class="court-head">
       <h2>Courtroom</h2>
       <span class="app-live" style="margin-left:8px"><i></i>Live</span>
+      <span class="tag tag-neutral" style="margin-left:8px;font-variant-numeric:tabular-nums"><svg class="ic is-xs"><use href="#i-clock"/></svg>14:32</span>
       <div class="court-head" style="margin-left:auto;border:0;padding:0;min-height:0">
         <button class="ic-btn" id="open-verdict" aria-label="Show verdict">
           <svg class="ic"><use href="#i-trophy"/></svg>
@@ -415,6 +416,7 @@
 
     <form class="composer" onsubmit="return false">
       <div class="chips">
+        <button class="chip-btn" type="button" data-say="Nyaya Saathi: Under Section 137 BSA, PW1 cannot contradict their Section 161 BNSS statement without leave." style="background:var(--rose);border-color:var(--maroon);color:var(--maroon);font-weight:700"><svg class="ic is-xs" style="margin-right:4px"><use href="#i-shield-check"/></svg>Nyaya Saathi</button>
         <button class="chip-btn" type="button" data-say="I have an objection, Your Honour. The question is leading.">Objection</button>
         <button class="chip-btn" type="button" data-say="I tender Ex.2, the seizure memo of the knife, for identification.">Tender exhibit</button>
         <button class="chip-btn" type="button" data-say="I seek permission to put the prior statement of PW1 to the witness.">Permission gate</button>
@@ -440,7 +442,7 @@
     <p>On the admitted record only, the Court finds the prosecution has not proved the presence of the accused at the scene beyond the statement of PW1, which is materially contradicted by Ex.3.</p>
     <p style="margin-top:12px">The accused is <strong>acquitted</strong> and set at liberty. Your cross-examination score was <strong>6.9/10</strong> &mdash; the contradiction landed, but you moved on before the answer was complete.</p>
     <div style="display:flex;gap:12px;margin-top:24px">
-      <button class="btn btn-primary" type="button" data-close>Read full report</button>
+      <a class="btn btn-primary" href="trial-report.html">Read full report</a>
       <button class="btn btn-outline" type="button" data-close>Close</button>
     </div>
   </div>

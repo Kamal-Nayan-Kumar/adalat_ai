@@ -241,7 +241,7 @@
       <a href="courtroom.html"><svg class="ic is-sm"><use href="#i-gavel-lite"/></svg>Courtroom</a>
       <a href="dashboard.html#report"><svg class="ic is-sm"><use href="#i-chart-bars"/></svg>My Report</a>
       <a href="dashboard.html#skills"><svg class="ic is-sm"><use href="#i-radar"/></svg>Skill Profile</a>
-      <a href="dashboard.html#feedback"><svg class="ic is-sm"><use href="#i-alert"/></svg>Examiner Remarks</a>
+      <a href="profile.html"><svg class="ic is-sm"><use href="#i-gear"/></svg>Settings</a>
     </nav>
 
     <div class="shell-rail-foot">
@@ -261,14 +261,38 @@
       <div class="shell-actions">
         <button class="ic-btn" aria-label="Search"><svg class="ic"><use href="#i-search"/></svg></button>
         <button class="ic-btn" aria-label="Notifications"><svg class="ic"><use href="#i-bell"/></svg></button>
-        <a class="btn btn-primary btn-sm" href="cases.html">
-          <svg class="ic is-xs"><use href="#i-plus"/></svg><span>New session</span>
+        <a class="btn btn-outline btn-sm" href="case-new.html">
+          <svg class="ic is-xs"><use href="#i-plus"/></svg><span>New Case Workspace</span>
         </a>
-        <span class="avatar" title="Aarav Sharma">AS</span>
+        <a class="btn btn-primary btn-sm" href="cases.html">
+          <svg class="ic is-xs"><use href="#i-gavel"/></svg><span>Cause List</span>
+        </a>
+        <a class="avatar" href="profile.html" title="Aarav Sharma — Profile & Settings">AS</a>
       </div>
     </header>
 
     <div class="shell-body">
+
+      <!-- Active Practice Card -->
+      <article class="card" style="margin-bottom:16px;background:linear-gradient(90deg,#fff 0%,rgba(110,18,23,.03) 100%);border-left:4px solid var(--maroon)">
+        <div class="card-head" style="padding-bottom:10px">
+          <div>
+            <span class="tag tag-neutral" style="color:var(--maroon)">Active Hearing #1 Adjourned</span>
+            <h2 style="font-size:20px;margin-top:6px">State vs. Ramesh Kumar &mdash; Section 103 BNS</h2>
+          </div>
+          <span class="tag tag-neutral">Next Date: 28 Oct 2026</span>
+        </div>
+        <div class="card-body" style="padding-top:0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px">
+          <p style="font-size:13.5px;color:var(--body);max-width:560px;margin:0">
+            Adjourned for cross-examination of PW4 (Investigating Officer) regarding seized knife memo (Ex.2).
+          </p>
+          <div style="display:flex;gap:10px">
+            <a class="btn btn-outline btn-sm" href="case-workspace.html"><svg class="ic is-xs"><use href="#i-doc-lines"/></svg>Open Workspace</a>
+            <a class="btn btn-outline btn-sm" href="trial-report.html"><svg class="ic is-xs"><use href="#i-chart-bars"/></svg>View Report</a>
+            <a class="btn btn-primary btn-sm" href="courtroom.html"><svg class="ic is-xs"><use href="#i-play"/></svg>Enter Courtroom</a>
+          </div>
+        </div>
+      </article>
 
       <!-- ---------- KPI row ---------- -->
       <section class="kpi-grid" aria-label="Summary">

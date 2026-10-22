@@ -137,11 +137,17 @@ case "${cmd}" in
     # Test HTTP responses directly without browser
     ROUTES=(
       "index.html:text/html"
-      "courtroom.html:text/html"
-      "dashboard.html:text/html"
-      "cases.html:text/html"
       "login.html:text/html"
       "signup.html:text/html"
+      "onboarding.html:text/html"
+      "dashboard.html:text/html"
+      "cases.html:text/html"
+      "case-new.html:text/html"
+      "case-workspace.html:text/html"
+      "trial-setup.html:text/html"
+      "courtroom.html:text/html"
+      "trial-report.html:text/html"
+      "profile.html:text/html"
       "styles.css:text/css"
       "app.js:application/javascript"
       "assets/icons.svg:image/svg+xml"
@@ -191,7 +197,11 @@ case "${cmd}" in
     echo "Running page integrity check on port ${PORT}..."
     CHECK_TMP="${VERIFY_DIR}/check-${PORT}.mjs"
     cat <<EOF > "${CHECK_TMP}"
-const PAGES = ["index.html", "login.html", "signup.html", "dashboard.html", "cases.html", "courtroom.html"];
+const PAGES = [
+  "index.html", "login.html", "signup.html", "onboarding.html",
+  "dashboard.html", "cases.html", "case-new.html", "case-workspace.html",
+  "trial-setup.html", "courtroom.html", "trial-report.html", "profile.html"
+];
 const task = await taskSpace("verify-adalat-check");
 const page = task.page("p1");
 await page.cdp("Network.enable");
