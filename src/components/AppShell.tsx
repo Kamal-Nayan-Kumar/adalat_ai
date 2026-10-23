@@ -55,11 +55,7 @@ export function AppShell({ children, activeNav = 'dashboard', pageTitle, topActi
         </nav>
 
         <div className="shell-rail-foot">
-          <Link className="btn btn-outline btn-sm" href="/">
-            <Icon name="i-arrow-left" size="xs" />
-            <span>Back to site</span>
-          </Link>
-          <Link href="/login" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'inherit', fontSize: '13px' }}>
+          <Link href="/login" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'inherit', fontSize: '13px', padding: '8px 12px' }}>
             <Icon name="i-logout" size="sm" />
             <span>Log out</span>
           </Link>
@@ -70,26 +66,23 @@ export function AppShell({ children, activeNav = 'dashboard', pageTitle, topActi
       <div className="shell-main">
         <header className="shell-topbar">
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            {/* Mobile toggle */}
+            {/* Unified sidebar toggle for both desktop and mobile */}
             <button
               className="ic-btn"
               id="shell-toggle"
-              aria-expanded={railOpen}
+              aria-expanded={railOpen || !collapsed}
               aria-controls="shell-rail"
-              aria-label="Open mobile navigation"
-              onClick={() => setRailOpen(!railOpen)}
+              aria-label="Toggle navigation sidebar"
+              title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              onClick={() => {
+                if (typeof window !== 'undefined' && window.innerWidth <= 900) {
+                  setRailOpen(!railOpen);
+                } else {
+                  setCollapsed(!collapsed);
+                }
+              }}
             >
               <Icon name="i-menu" />
-            </button>
-            {/* Desktop collapse toggle */}
-            <button
-              className="ic-btn"
-              id="sidebar-toggle"
-              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-              title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-              onClick={() => setCollapsed(!collapsed)}
-            >
-              <Icon name={collapsed ? 'i-chevron-right' : 'i-filter'} size="sm" />
             </button>
             <h1>{pageTitle}</h1>
           </div>

@@ -37,7 +37,7 @@
   --rose:#FBEAE2;
   --card:#FDF9F2;
 
-  --serif:'Source Serif 4','Fraunces','Playfair Display',Georgia,serif;
+  --serif:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   --sans:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   --deva:'Noto Serif Devanagari','Kohinoor Devanagari','Mangal',serif;
 
@@ -750,16 +750,30 @@ table.data .strong{font-weight:600;color:var(--ink)}
 .empty p{font-size:14.5px;color:var(--muted);max-width:380px}
 
 /* ---------- courtroom ---------- */
-.court{display:grid;grid-template-columns:288px minmax(0,1fr) 380px;min-height:100vh;background:var(--ivory)}
-.court-col{min-width:0;display:flex;flex-direction:column;border-right:1px solid var(--line);background:#fff}
-.court-col--info{border-right:1px solid var(--line)}
-.court[data-show]{}
+.court{
+  display:grid;grid-template-columns:280px minmax(0,1fr) 390px;
+  height:100vh;max-height:100vh;overflow:hidden;background:var(--ivory);
+}
+.court-col{
+  min-width:0;height:100vh;max-height:100vh;display:flex;flex-direction:column;
+  overflow:hidden;background:#fff;border-right:1px solid var(--line);
+}
+.court-col--info{overflow-y:auto;background:var(--ivory-2)}
 .court-col--stage{
-  position:relative;isolation:isolate;
+  overflow:hidden;position:relative;isolation:isolate;
   background:radial-gradient(120% 80% at 50% 0%,#FFF6EA 0%,rgba(255,246,234,0) 60%),var(--ivory);
 }
-/* Symmetric courtroom illustration, anchored to the bottom of the stage and
-   faded into the page so it never competes with the bench or the agent cards. */
+.court-col--chat{
+  border-right:0;border-left:1px solid var(--line);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.court-col--chat .court-scroll{
+  flex:1 1 auto;overflow-y:auto;min-height:0;padding:16px 18px;
+}
+.court-col--chat .composer{
+  flex-shrink:0;position:sticky;bottom:0;z-index:10;
+  background:#fff;border-top:1px solid var(--line);padding:14px 18px;
+}
 .stage-bg{position:absolute;inset:auto 0 0 0;height:78%;z-index:-1;overflow:hidden;pointer-events:none}
 .stage-bg img{width:100%;height:100%;object-fit:cover;object-position:50% 72%}
 .stage-bg::after{
@@ -767,41 +781,127 @@ table.data .strong{font-weight:600;color:var(--ink)}
   background:linear-gradient(180deg,var(--ivory) 0%,rgba(254,252,247,.86) 12%,rgba(254,252,247,.35) 26%,rgba(254,252,247,0) 42%),
              linear-gradient(0deg,rgba(254,252,247,.55) 0%,rgba(254,252,247,0) 26%);
 }
-.stage{position:relative;z-index:1}
-.court-col--chat{border-right:0;border-left:1px solid var(--line)}
-.court-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line);min-height:66px}
+
+.court-head{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);min-height:64px;flex-shrink:0}
 .court-head h2{font-family:var(--serif);font-weight:700;font-size:16px;line-height:1.3;color:var(--ink)}
 .court-head .ic-btn{margin-left:auto}
-.court-scroll{overflow-y:auto;flex:1;padding:16px 18px}
 .court-info-block + .court-info-block{margin-top:20px}
 .court-info-block h3{font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brick);margin-bottom:10px}
 .court-list{display:grid;gap:8px}
-.court-list li{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--body);padding:8px 10px;background:var(--ivory-2);border:1px solid var(--line);border-radius:var(--r-sm)}
+.court-list li{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--body);padding:8px 10px;background:#fff;border:1px solid var(--line);border-radius:var(--r-sm)}
 .court-list .ic{color:var(--maroon)}
 
-.stage{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:24px 28px}
-.bench{
-  position:relative;background:linear-gradient(180deg,#F7E9D5,#F1DCC0);
-  border:1px solid #E3C9A6;border-radius:var(--r-lg);
-  padding:22px 26px;display:flex;align-items:center;gap:20px;
-  box-shadow:0 10px 24px rgba(120,80,30,.10);
+/* 3D Real Indian Courtroom Stage Scene */
+.courtroom-3d-scene{
+  flex:1;position:relative;display:flex;flex-direction:column;
+  justify-content:space-between;padding:16px 22px 20px;
+  perspective:1100px;perspective-origin:50% 30%;overflow:hidden;user-select:none;
 }
-.bench-dais-border{
-  position:absolute;top:0;left:0;right:0;height:4px;
+.courtroom-floor{
+  position:absolute;inset:auto -10% -10% -10%;height:75%;
+  background:linear-gradient(180deg,rgba(247,233,213,0) 0%,rgba(241,220,192,0.6) 30%,rgba(228,198,160,0.85) 100%),
+    repeating-linear-gradient(90deg,transparent 0,transparent 80px,rgba(160,110,60,0.08) 80px,rgba(160,110,60,0.08) 82px);
+  transform:rotateX(26deg);transform-origin:50% 100%;z-index:0;pointer-events:none;
+  box-shadow:inset 0 40px 60px rgba(80,40,10,0.08);
+}
+
+/* 3D Elevated Judicial Dais */
+.bench-3d-dais{
+  position:relative;z-index:5;background:linear-gradient(180deg,#F9EFE3 0%,#F3DFC6 60%,#E9D1B2 100%);
+  border:2px solid #D6B995;border-radius:var(--r-lg);padding:18px 24px;
+  box-shadow:0 14px 34px rgba(70,35,10,0.18), inset 0 2px 0 rgba(255,255,255,0.8);
+  display:flex;align-items:center;gap:18px;max-width:680px;margin:0 auto;
+  transform:translateZ(30px);transition:all .25s ease;
+}
+.bench-3d-dais::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:4px;
   background:linear-gradient(90deg,var(--maroon),var(--gold),var(--maroon));
   border-radius:var(--r-lg) var(--r-lg) 0 0;
 }
-.bench .ic-slot{background:#fff;color:var(--maroon)}
-.bench-name{font-family:var(--serif);font-weight:800;font-size:22px;line-height:1.25;color:#5A1A14}
-.bench-role{margin-top:3px;font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A6B45}
-.bench-status{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:#7A5233}
-.bench-status i{width:8px;height:8px;border-radius:50%;background:#4E9A73;display:block}
-
-/* Real Courtroom Simulator Centrepiece additions */
-.courtroom-stage-wrapper{
-  flex:1;display:flex;flex-direction:column;justify-content:space-between;
-  padding:16px 24px 24px;position:relative;z-index:1;
+.bench-3d-dais.is-speaking{
+  border-color:var(--maroon);
+  box-shadow:0 0 0 3px rgba(110,18,23,0.3), 0 16px 38px rgba(110,18,23,0.22);
 }
+
+/* 3D Court Well Table */
+.court-well-table{
+  position:relative;z-index:4;margin:6px auto;max-width:540px;width:100%;
+  background:linear-gradient(180deg,#FDFBF7 0%,#F6EFE6 100%);
+  border:1.5px solid #DBC2A4;border-radius:var(--r-md);padding:8px 16px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.07);display:flex;align-items:center;
+  justify-content:space-between;transform:translateZ(15px);
+}
+
+/* 3D Counsel Bar: Prosecutor & Defence */
+.court-bar-grid{
+  position:relative;z-index:6;display:grid;grid-template-columns:1fr 1fr;
+  gap:28px;margin-top:auto;
+}
+
+.station-prosecution{
+  background:linear-gradient(135deg,#FFFDFB 0%,#FBF5ED 100%);
+  border:2px solid #DFC6A8;border-radius:var(--r-md);padding:16px;
+  box-shadow:0 10px 24px rgba(0,0,0,0.08);transform:rotateY(14deg) rotateX(4deg);
+  transform-origin:left center;transition:all .25s ease;position:relative;
+}
+.station-prosecution.is-speaking{
+  border-color:var(--maroon);
+  box-shadow:0 0 0 3px rgba(110,18,23,0.25), 0 12px 30px rgba(110,18,23,0.2);
+  transform:rotateY(8deg) scale(1.02);
+}
+
+.station-defence{
+  background:linear-gradient(225deg,#FFFDFB 0%,#FDF5ED 100%);
+  border:2px solid #DFC6A8;border-radius:var(--r-md);padding:16px;
+  box-shadow:0 10px 24px rgba(0,0,0,0.08);transform:rotateY(-14deg) rotateX(4deg);
+  transform-origin:right center;transition:all .25s ease;position:relative;
+}
+.station-defence.is-speaking{
+  border-color:var(--maroon);
+  box-shadow:0 0 0 3px rgba(110,18,23,0.25), 0 12px 30px rgba(110,18,23,0.2);
+  transform:rotateY(-8deg) scale(1.02);
+}
+
+/* The Kathghara: Witness Stand */
+.station-witness-box{
+  position:relative;z-index:5;background:linear-gradient(180deg,#FFFDFB 0%,#FDF7EE 100%);
+  border:2px solid #CFA97E;border-radius:var(--r-md);padding:12px 16px;
+  box-shadow:0 8px 22px rgba(90,50,15,0.12);max-width:320px;margin:0 auto 4px;
+  text-align:center;transition:all .25s ease;
+}
+.station-witness-box.is-speaking{
+  border-color:var(--maroon);
+  box-shadow:0 0 0 3px rgba(110,18,23,0.25), 0 12px 30px rgba(110,18,23,0.2);
+  transform:scale(1.02);
+}
+.kathghara-slats{
+  position:absolute;top:0;left:0;right:0;height:6px;
+  background:repeating-linear-gradient(90deg,#A87D56 0,#A87D56 8px,transparent 8px,transparent 16px);
+  border-radius:var(--r-md) var(--r-md) 0 0;
+}
+
+/* SPEECH BUBBLE DIRECTLY OVER CHARACTER HEADS */
+.speech-bubble-anchor{position:relative}
+.speech-bubble-callout{
+  position:absolute;bottom:calc(100% + 12px);left:50%;
+  transform:translateX(-50%);width:max-content;max-width:300px;
+  background:rgba(255,255,255,0.98);backdrop-filter:blur(10px);
+  border:2px solid var(--maroon);border-radius:var(--r-md);padding:10px 14px;
+  box-shadow:0 8px 24px rgba(110,18,23,0.2);z-index:50;
+  animation:popBubble 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-align:left;
+}
+.speech-bubble-callout::after{
+  content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border-width:8px 8px 0 8px;border-style:solid;
+  border-color:var(--maroon) transparent transparent transparent;
+}
+@keyframes popBubble{
+  0%{transform:translateX(-50%) scale(0.85);opacity:0}
+  100%{transform:translateX(-50%) scale(1);opacity:1}
+}
+.speech-bubble-who{font-size:11px;font-weight:800;text-transform:uppercase;color:var(--maroon);letter-spacing:.05em;margin-bottom:2px}
+.speech-bubble-text{font-size:13px;line-height:1.45;color:var(--ink);font-weight:600}
 
 .dialogue-spotlight{
   background:rgba(255,255,255,.97);backdrop-filter:blur(8px);

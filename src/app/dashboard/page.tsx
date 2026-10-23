@@ -39,33 +39,45 @@ export default function DashboardPage() {
           borderLeft: '4px solid var(--maroon)',
         }}
       >
-        <div className="card-head" style={{ paddingBottom: '10px' }}>
+        <div className="card-head">
           <div>
             <span className="tag tag-neutral" style={{ color: 'var(--maroon)' }}>
               Active Hearing #1 Adjourned
             </span>
-            <h2 style={{ fontSize: '20px', marginTop: '6px' }}>State vs. Ramesh Kumar &mdash; Section 103 BNS</h2>
+            <h2 style={{ fontSize: '19px', marginTop: '6px' }}>State vs. Ramesh Kumar &mdash; Section 103 BNS</h2>
           </div>
           <span className="tag tag-neutral">Next Date: 28 Oct 2026</span>
         </div>
-        <div className="card-body" style={{ paddingTop: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px' }}>
-          <p style={{ fontSize: '13.5px', color: 'var(--body)', maxWidth: '560px', margin: 0 }}>
-            Adjourned for cross-examination of PW4 (Investigating Officer) regarding seized knife memo (Ex.2).
+        <div className="card-body" style={{ padding: '16px 20px' }}>
+          <p style={{ fontSize: '14px', color: 'var(--body)', margin: 0, lineHeight: 1.5 }}>
+            Adjourned for cross-examination of PW4 (Investigating Officer) regarding seized knife memo (Ex.2). Contradictions established on ambient lighting.
           </p>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <Link className="btn btn-outline btn-sm" href="/cases/1">
-              <Icon name="i-doc-lines" size="xs" />
-              Open Workspace
-            </Link>
-            <Link className="btn btn-outline btn-sm" href="/trials/1/report">
-              <Icon name="i-chart-bars" size="xs" />
-              View Report
-            </Link>
-            <Link className="btn btn-primary btn-sm" href="/trials/1/courtroom">
-              <Icon name="i-play" size="xs" />
-              Enter Courtroom
-            </Link>
-          </div>
+        </div>
+        <div
+          className="card-foot"
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '12px 20px',
+            borderTop: '1px solid var(--line)',
+            background: 'rgba(0, 0, 0, 0.015)',
+            flexWrap: 'wrap',
+          }}
+        >
+          <Link className="btn btn-outline btn-sm" href="/cases/1">
+            <Icon name="i-doc-lines" size="xs" />
+            Open Workspace
+          </Link>
+          <Link className="btn btn-outline btn-sm" href="/trials/1/report">
+            <Icon name="i-chart-bars" size="xs" />
+            View Report
+          </Link>
+          <Link className="btn btn-primary btn-sm" href="/trials/1/courtroom">
+            <Icon name="i-play" size="xs" />
+            Enter Courtroom
+          </Link>
         </div>
       </article>
 

@@ -161,15 +161,15 @@ export default function CourtroomPage() {
     addMessage('You', 'i-user', trimmed, 'you');
     setInputVal('');
 
-    // Update active speech bubble and state
-    setActiveSpeaker('judge');
-    setStageStatus('Judge AI evaluating objection...');
-    setAgentReasoning("Hon'ble Judge AI is reviewing objection against Section 137 BSA rules...");
+    // 1. Defence speaks first
+    setActiveSpeaker('defence');
+    setStageStatus('Objection raised — Judge considering...');
+    setAgentReasoning("Defence Counsel has raised an objection under Section 137 BSA...");
     setCurrentSpeech({
       who: 'Defence Counsel (You)',
       role: 'Cross-Examining Advocate',
       text: trimmed,
-      icon: 'i-user',
+      icon: 'i-shield',
     });
 
     // Check if user tendered Ex.2
@@ -177,19 +177,19 @@ export default function CourtroomPage() {
       setAdmittedOnTable((prev) => [...prev, 'Ex.2']);
     }
 
-    // Timed Judge AI ruling and Gavel Strike
+    // 2. Judge AI ruling and Gavel Strike after 700ms
     setTimeout(() => {
       setGavelAlert('OBJECTION SUSTAINED &bull; SECTION 137 BSA');
       addMessage('Judge AI', 'i-judge', 'Noted. Objection sustained. Let the record reflect that. Counsel, you may proceed.', 'judge');
       setStageStatus('Your turn');
-      setActiveSpeaker('defence');
+      setActiveSpeaker('judge');
       setCurrentSpeech({
         who: 'The Hon\'ble Judge AI',
-        role: 'Presiding Judge',
-        text: 'Objection sustained. Let the record reflect the contradiction. Counsel for Defence may proceed with cross-examination.',
+        role: 'Presiding Sessions Judge',
+        text: 'Objection sustained. The question is leading under Section 137 BSA. Prosecution shall rephrase.',
         icon: 'i-judge',
       });
-      setAgentReasoning('Defence Counsel has the floor. Focus on distance from streetlight in Ex.3.');
+      setAgentReasoning('Defence objection sustained. You have the floor to cross-examine PW1.');
       setObjectionScore((prev) => Math.min(10, +(prev + 0.2).toFixed(1)));
       setCrossScore((prev) => Math.min(10, +(prev + 0.3).toFixed(1)));
       setWitnessDemeanor({ credibility: 48, stress: 92, heartRate: 128 });
@@ -384,50 +384,90 @@ export default function CourtroomPage() {
           <span style={{ fontSize: '11.5px', color: 'var(--muted)' }}>Sec 238 BNSS Proceeding</span>
         </div>
 
-        {/* STAGE CONTAINER */}
-        <div className="courtroom-stage-wrapper">
+        {/* STAGE CONTAINER WITH 3D PERSPECTIVE */}
+        <div className="courtroom-3d-scene">
+          <div className="courtroom-floor" />
+
           {/* GAVEL FLASH BANNER (WHEN OBJECTION SUSTAINED) */}
           {gavelAlert && (
-            <div className="gavel-alert-banner" role="alert">
+            <div className="gavel-alert-banner" role="alert" style={{ position: 'relative', zIndex: 60 }}>
               <span style={{ fontSize: '18px' }}>⚖️</span>
               <span dangerouslySetInnerHTML={{ __html: gavelAlert }} />
             </div>
           )}
 
-          {/* 1. THE ELEVATED JUDICIAL BENCH */}
-          <div className={`bench ${activeSpeaker === 'judge' ? 'is-speaking' : ''}`}>
-            <span className="bench-dais-border" />
-            <span className="ic-slot ic-slot--64">
-              <Icon name="i-judge" size="2xl" />
-            </span>
-            <div>
-              <div className="bench-name">The Hon&rsquo;ble Judge AI</div>
-              <div className="bench-role">Presiding Sessions Judge &bull; State of Judicial Record</div>
+          {/* 1. TOP TIER: ELEVATED JUDGE DAIS (CENTER, AUDIENCE-FACING) + KATHGHARA WITNESS STAND (BESIDE DAIS) */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.35fr) minmax(0, 1fr)', gap: '16px', position: 'relative', zIndex: 10, alignItems: 'end' }}>
+            
+            {/* THE JUDICIAL BENCH (Audience Facing) */}
+            <div className={`bench-3d-dais speech-bubble-anchor ${activeSpeaker === 'judge' ? 'is-speaking' : ''}`}>
+              {activeSpeaker === 'judge' && (
+                <div className="speech-bubble-callout" style={{ borderColor: 'var(--maroon)' }}>
+                  <div className="speech-bubble-who">The Hon&rsquo;ble Judge AI &bull; Judicial Ruling</div>
+                  <div className="speech-bubble-text">&ldquo;{currentSpeech.text}&rdquo;</div>
+                </div>
+              )}
+              <span className="ic-slot ic-slot--56" style={{ background: '#fff', color: 'var(--maroon)' }}>
+                <Icon name="i-judge" size="xl" />
+              </span>
+              <div>
+                <div style={{ fontFamily: 'var(--serif)', fontWeight: 800, fontSize: '18px', color: '#5A1A14' }}>
+                  The Hon&rsquo;ble Judge AI
+                </div>
+                <div style={{ fontSize: '11.5px', fontWeight: 600, letterSpacing: '.08em', textTransform: 'uppercase', color: '#8C5B32', marginTop: '2px' }}>
+                  Presiding Sessions Bench &bull; Section 238 BNSS
+                </div>
+              </div>
+              <span className="bench-status" style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#7A5233' }}>
+                <i style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4E9A73', display: 'inline-block' }} />
+                <span>{stageStatus}</span>
+              </span>
             </div>
-            <span className="bench-status">
-              <i />
-              <span id="stage-status">{stageStatus}</span>
-            </span>
+
+            {/* KATHGHARA (WITNESS STAND) */}
+            <div className={`station-witness-box speech-bubble-anchor ${activeSpeaker === 'witness' ? 'is-speaking' : ''}`}>
+              {activeSpeaker === 'witness' && (
+                <div className="speech-bubble-callout">
+                  <div className="speech-bubble-who">Witness AI (PW1) &bull; Deposing Under Oath</div>
+                  <div className="speech-bubble-text">&ldquo;{currentSpeech.text}&rdquo;</div>
+                </div>
+              )}
+              <div className="kathghara-slats" />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '4px' }}>
+                <Icon name="i-witness" size="sm" />
+                <b style={{ fontSize: '13.5px', color: 'var(--ink)' }}>PW1 &mdash; Witness Box (Kathghara)</b>
+              </div>
+              <span className="tag tag-neutral" style={{ fontSize: '10.5px', padding: '2px 8px', marginTop: '6px' }}>
+                {activeSpeaker === 'witness' ? 'Speaking Under Oath' : 'In Stand &bull; Oaths Act 1969'}
+              </span>
+
+              {/* Real-time Demeanor Radar */}
+              <div className="credibility-meter">
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Credibility Index</span>
+                  <strong>{witnessDemeanor.credibility}%</strong>
+                </div>
+                <div className="credibility-bar">
+                  <div
+                    className="credibility-fill"
+                    style={{
+                      width: `${witnessDemeanor.credibility}%`,
+                      background: witnessDemeanor.credibility > 55 ? '#059669' : '#D97706',
+                    }}
+                  />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10.5px', marginTop: '2px' }}>
+                  <span>Hesitation: {witnessDemeanor.stress}%</span>
+                  <span>HR: {witnessDemeanor.heartRate} bpm</span>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          {/* 2. LIVE STAGE DIALOGUE SPOTLIGHT (Projects Words onto the Room) */}
-          <div className="dialogue-spotlight">
-            <span className="ic-slot ic-slot--40" style={{ background: 'var(--peach)', color: 'var(--maroon)' }}>
-              <Icon name={currentSpeech.icon} size="sm" />
-            </span>
-            <div style={{ flex: 1 }}>
-              <div className="dialogue-spotlight-speaker">
-                {currentSpeech.who} &bull; <span style={{ color: 'var(--muted)', fontWeight: 500 }}>{currentSpeech.role}</span>
-              </div>
-              <div className="dialogue-spotlight-text">
-                &ldquo;{currentSpeech.text}&rdquo;
-              </div>
-            </div>
-          </div>
-
-          {/* 3. THE WELL OF THE COURT: EVIDENCE & EXHIBIT TABLE */}
-          <div className="court-well">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* 2. MIDDLE TIER: WELL OF COURT & CLERK EVIDENCE TABLE */}
+          <div className="court-well-table">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
               <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--brick)' }}>
                 Court Clerk Table &bull; Admitted Evidence:
               </span>
@@ -449,33 +489,62 @@ export default function CourtroomPage() {
                 })}
               </div>
             </div>
-            <span style={{ fontSize: '11px', color: 'var(--muted)' }}>Click exhibit to inspect</span>
+            <span style={{ fontSize: '11px', color: 'var(--muted)', whiteSpace: 'nowrap' }}>Click exhibit to inspect</span>
           </div>
 
-          {/* 4. THE THREE PARTICIPANT STATIONS */}
-          <div className="agents-row">
-            {/* PROSECUTION BAR */}
-            <article className={`agent-seat ${activeSpeaker === 'prosecution' ? 'is-speaking' : ''}`}>
-              <span className="ic-slot ic-slot--48"><Icon name="i-scales" size="lg" /></span>
-              <b>Prosecution AI</b>
-              <em>Public Prosecutor for State</em>
-              <span className="tag tag-neutral" style={{ marginTop: '10px' }}>
-                {activeSpeaker === 'prosecution' ? 'Examining PW1' : 'Waiting'}
-              </span>
+          {/* 3. BOTTOM TIER: COUNSEL BAR (PROSECUTOR & DEFENCE ANGLED IN 3D TOWARDS THE JUDGE) */}
+          <div className="court-bar-grid">
+            
+            {/* PROSECUTION BAR (Left, angled 3D facing Judge) */}
+            <article className={`station-prosecution speech-bubble-anchor ${activeSpeaker === 'prosecution' ? 'is-speaking' : ''}`}>
+              {activeSpeaker === 'prosecution' && (
+                <div className="speech-bubble-callout">
+                  <div className="speech-bubble-who">Prosecution AI &bull; State Counsel</div>
+                  <div className="speech-bubble-text">&ldquo;{currentSpeech.text}&rdquo;</div>
+                </div>
+              )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span className="ic-slot ic-slot--40" style={{ background: 'var(--peach)', color: 'var(--maroon)' }}>
+                  <Icon name="i-scales" size="md" />
+                </span>
+                <div>
+                  <b style={{ fontSize: '14.5px', color: 'var(--ink)' }}>Prosecution Bar</b>
+                  <p style={{ fontSize: '12px', color: 'var(--muted)', margin: 0 }}>Public Prosecutor for State</p>
+                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--line)' }}>
+                <span className="tag tag-neutral" style={{ fontSize: '11px' }}>
+                  {activeSpeaker === 'prosecution' ? 'Examining PW1' : 'Waiting for Ruling'}
+                </span>
+                <span style={{ fontSize: '11px', color: 'var(--muted)', fontStyle: 'italic' }}>Facing Dais &rsaquo;</span>
+              </div>
             </article>
 
-            {/* COUNSEL LECTERN (YOUR DESK) */}
-            <article className={`counsel-lectern ${activeSpeaker === 'defence' ? 'is-speaking' : ''}`}>
-              <span className="ic-slot ic-slot--48" style={{ background: 'var(--rose)', color: 'var(--maroon)' }}>
-                <Icon name="i-shield" size="lg" />
-              </span>
-              <b style={{ color: 'var(--maroon)' }}>Defence Bar (You)</b>
-              <em style={{ color: 'var(--body)' }}>Active Defense Counsel</em>
-              <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginTop: '10px' }}>
+            {/* DEFENCE BAR & LECTERN (Right, angled 3D facing Judge - Your Station) */}
+            <article className={`station-defence speech-bubble-anchor ${activeSpeaker === 'defence' ? 'is-speaking' : ''}`}>
+              {activeSpeaker === 'defence' && (
+                <div className="speech-bubble-callout">
+                  <div className="speech-bubble-who">Defence Counsel (You) &bull; Cross-Examining</div>
+                  <div className="speech-bubble-text">&ldquo;{currentSpeech.text}&rdquo;</div>
+                </div>
+              )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span className="ic-slot ic-slot--40" style={{ background: 'var(--rose)', color: 'var(--maroon)' }}>
+                  <Icon name="i-shield" size="md" />
+                </span>
+                <div>
+                  <b style={{ fontSize: '14.5px', color: 'var(--maroon)' }}>Defence Bar (You)</b>
+                  <p style={{ fontSize: '12px', color: 'var(--body)', margin: 0 }}>Active Defence Counsel</p>
+                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--line)' }}>
+                <span className="tag tag-neutral" style={{ fontSize: '11px', color: 'var(--maroon)' }}>
+                  {activeSpeaker === 'defence' ? 'Your Turn to Cross-Examine' : 'Monitoring Inconsistencies'}
+                </span>
                 <button
                   type="button"
                   className="btn btn-primary btn-sm"
-                  style={{ fontSize: '11.5px', padding: '3px 9px', height: '28px' }}
+                  style={{ fontSize: '11.5px', padding: '3px 10px', height: '28px' }}
                   onClick={() => submitUserMessage('I have an objection, Your Honour! The question is leading under Section 137 BSA.')}
                 >
                   Rise to Object
@@ -483,42 +552,11 @@ export default function CourtroomPage() {
               </div>
             </article>
 
-            {/* KATHGHARA (THE WITNESS STAND) */}
-            <article className={`kathghara ${activeSpeaker === 'witness' ? 'is-speaking' : ''}`}>
-              <div className="kathghara-slats" />
-              <span className="ic-slot ic-slot--48"><Icon name="i-witness" size="lg" /></span>
-              <b>Witness AI (PW1)</b>
-              <em style={{ fontSize: '12px' }}>Sworn on Oaths Act 1969</em>
-              <span className="tag tag-neutral" style={{ marginTop: '8px' }}>
-                {activeSpeaker === 'witness' ? 'Deposing' : 'In Stand'}
-              </span>
-
-              {/* Real-time Demeanor Radar */}
-              <div className="credibility-meter">
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>Credibility Index</span>
-                  <strong>{witnessDemeanor.credibility}%</strong>
-                </div>
-                <div className="credibility-bar">
-                  <div
-                    className="credibility-fill"
-                    style={{
-                      width: `${witnessDemeanor.credibility}%`,
-                      background: witnessDemeanor.credibility > 60 ? '#059669' : '#D97706',
-                    }}
-                  />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10.5px', marginTop: '2px' }}>
-                  <span>Hesitation: {witnessDemeanor.stress}%</span>
-                  <span>HR: {witnessDemeanor.heartRate} bpm</span>
-                </div>
-              </div>
-            </article>
           </div>
 
           {/* STAGE FOOTER */}
           <div className="stage-foot">
-            <span>District Sessions Division</span>
+            <span>District Criminal Court &bull; Sessions Division</span>
             <span className="divider" aria-hidden="true" />
             <span>Preserving record under Section 137 BSA &bull; Section 238 BNSS</span>
           </div>
