@@ -11,7 +11,6 @@ export default function SignupPage() {
   const [last, setLast] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('student');
   const [terms, setTerms] = useState(false);
   const [showPwd, setShowPwd] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
@@ -36,7 +35,6 @@ export default function SignupPage() {
     setLast('Sharma');
     setEmail('aarav@example.com');
     setPassword('Practice2026!');
-    setRole('aspirant');
     setTerms(true);
     setErrors({});
   };
@@ -56,7 +54,7 @@ export default function SignupPage() {
     }
 
     setErrors({});
-    router.push(`/onboarding?role=${role}`);
+    router.push('/onboarding');
   };
 
   return (
@@ -68,13 +66,18 @@ export default function SignupPage() {
           <img className="auth-art-bg" src="/assets/auth-panel.png" alt="" aria-hidden="true" width={900} height={1200} />
         </picture>
         <div className="auth-art-body">
-          <Link className="brand" href="/" aria-label="Adalat AI home">
-            <img className="brand-mark" src="/assets/logo-mark.png" alt="" width={44} height={44} />
-            <span className="brand-text">
-              <span className="brand-name">Adalat AI</span>
-              <span className="brand-hi">अदालत</span>
-            </span>
-          </Link>
+          <div>
+            <Link className="brand" href="/" aria-label="Adalat AI home">
+              <img className="brand-mark" src="/assets/logo-mark.png" alt="" width={44} height={44} />
+              <span className="brand-text">
+                <span className="brand-name">Adalat AI</span>
+                <span className="brand-hi">अदालत</span>
+              </span>
+            </Link>
+            <div className="auth-art-badge">
+              <span>Courtroom Simulator &bull; Indian Law</span>
+            </div>
+          </div>
 
           <div className="auth-art-quote">
             <h2>Your first case is waiting.</h2>
@@ -82,11 +85,15 @@ export default function SignupPage() {
             <ul className="auth-art-points">
               <li>
                 <Icon name="i-check-circle" size="sm" />
-                Free to start, no card needed
+                <span><strong>Free to Start:</strong> Immediate trial access across criminal, civil and evidence matters</span>
               </li>
               <li>
                 <Icon name="i-check-circle" size="sm" />
-                Criminal, civil and evidence matters
+                <span><strong>Multi-Agent Courtroom:</strong> Argue before AI Judge, Prosecution, Defence, and Witness</span>
+              </li>
+              <li>
+                <Icon name="i-check-circle" size="sm" />
+                <span><strong>Nyaya Saathi Co-Pilot:</strong> Live tactical cues and statutory guidance during hearings</span>
               </li>
             </ul>
           </div>
@@ -97,7 +104,7 @@ export default function SignupPage() {
       <main className="auth-panel">
         <div className="auth-form">
           <h1>Create your account</h1>
-          <p>Tell us who you are so we can shape your practice.</p>
+          <p>Get started with your AI-simulated courtroom practice.</p>
 
           <div className="auth-demo-hint">
             <span><strong>Testing?</strong> Fill demo registration info</span>
@@ -217,71 +224,6 @@ export default function SignupPage() {
               ) : (
                 <p className="hint" id="password-hint">Minimum 8 characters, with one number.</p>
               )}
-            </div>
-
-            <div className="field">
-              <label id="role-label">I am a&hellip;</label>
-              <div className="role-grid" role="radiogroup" aria-labelledby="role-label">
-                <label className="role-opt">
-                  <input
-                    type="radio"
-                    name="role"
-                    value="student"
-                    checked={role === 'student'}
-                    onChange={() => setRole('student')}
-                  />
-                  <Icon name="i-cap" />
-                  <span>
-                    <b>Law student</b>
-                    <em>Building advocacy fundamentals from case files.</em>
-                  </span>
-                </label>
-
-                <label className="role-opt">
-                  <input
-                    type="radio"
-                    name="role"
-                    value="aspirant"
-                    checked={role === 'aspirant'}
-                    onChange={() => setRole('aspirant')}
-                  />
-                  <Icon name="i-landmark" />
-                  <span>
-                    <b>Judiciary aspirant</b>
-                    <em>Preparing for civil service and judicial exams.</em>
-                  </span>
-                </label>
-
-                <label className="role-opt">
-                  <input
-                    type="radio"
-                    name="role"
-                    value="advocate"
-                    checked={role === 'advocate'}
-                    onChange={() => setRole('advocate')}
-                  />
-                  <Icon name="i-shield" />
-                  <span>
-                    <b>Practicing advocate</b>
-                    <em>Rehearsing trial theories, cross-exam, and witness strategy.</em>
-                  </span>
-                </label>
-
-                <label className="role-opt">
-                  <input
-                    type="radio"
-                    name="role"
-                    value="college"
-                    checked={role === 'college'}
-                    onChange={() => setRole('college')}
-                  />
-                  <Icon name="i-people" />
-                  <span>
-                    <b>Faculty or college</b>
-                    <em>Running classroom moot court sessions.</em>
-                  </span>
-                </label>
-              </div>
             </div>
 
             <div className="field" style={{ marginTop: '16px' }}>

@@ -43,29 +43,34 @@ export default function LoginPage() {
           <img className="auth-art-bg" src="/assets/auth-panel.png" alt="" aria-hidden="true" width={900} height={1200} />
         </picture>
         <div className="auth-art-body">
-          <Link className="brand" href="/" aria-label="Adalat AI home">
-            <img className="brand-mark" src="/assets/logo-mark.png" alt="" width={44} height={44} />
-            <span className="brand-text">
-              <span className="brand-name">Adalat AI</span>
-              <span className="brand-hi">अदालत</span>
-            </span>
-          </Link>
+          <div>
+            <Link className="brand" href="/" aria-label="Adalat AI home">
+              <img className="brand-mark" src="/assets/logo-mark.png" alt="" width={44} height={44} />
+              <span className="brand-text">
+                <span className="brand-name">Adalat AI</span>
+                <span className="brand-hi">अदालत</span>
+              </span>
+            </Link>
+            <div className="auth-art-badge">
+              <span>Courtroom Simulator &bull; Indian Law</span>
+            </div>
+          </div>
 
           <div className="auth-art-quote">
             <h2>Practise before it counts.</h2>
-            <p>Every session is a full courtroom &mdash; judge, prosecution, defence and witness &mdash; arguing on the record of a real Indian case file.</p>
+            <p>Every session is a living courtroom &mdash; Judge, Prosecution, Defence, and Witness AI &mdash; arguing on the official record of a real Indian case file.</p>
             <ul className="auth-art-points">
               <li>
                 <Icon name="i-check-circle" size="sm" />
-                Real cause-lists with case files
+                <span><strong>Multi-Agent Dynamics:</strong> Presiding Judge, Prosecutor, and Witness in Kathghara</span>
               </li>
               <li>
                 <Icon name="i-check-circle" size="sm" />
-                Feedback on six advocacy skills
+                <span><strong>Statutory Fidelity:</strong> Automatic BNS 2023 or IPC 1860 regime selection by offence date</span>
               </li>
               <li>
                 <Icon name="i-check-circle" size="sm" />
-                IPC or BNS, picked by offence date
+                <span><strong>Objective Examiner Rubric:</strong> Detailed scoring across six advocacy skills</span>
               </li>
             </ul>
           </div>
