@@ -763,18 +763,86 @@ table.data .strong{font-weight:600;color:var(--ink)}
 .court-list li{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--body);padding:8px 10px;background:var(--ivory-2);border:1px solid var(--line);border-radius:var(--r-sm)}
 .court-list .ic{color:var(--maroon)}
 
-.stage{flex:1;display:flex;flex-direction:column;justify-content:center;gap:26px;padding:32px 28px}
+.stage{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:24px 28px}
 .bench{
   position:relative;background:linear-gradient(180deg,#F7E9D5,#F1DCC0);
   border:1px solid #E3C9A6;border-radius:var(--r-lg);
-  padding:26px 28px;display:flex;align-items:center;gap:20px;
+  padding:22px 26px;display:flex;align-items:center;gap:20px;
   box-shadow:0 10px 24px rgba(120,80,30,.10);
+}
+.bench-dais-border{
+  position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--maroon),var(--gold),var(--maroon));
+  border-radius:var(--r-lg) var(--r-lg) 0 0;
 }
 .bench .ic-slot{background:#fff;color:var(--maroon)}
 .bench-name{font-family:var(--serif);font-weight:800;font-size:22px;line-height:1.25;color:#5A1A14}
 .bench-role{margin-top:3px;font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A6B45}
 .bench-status{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:#7A5233}
 .bench-status i{width:8px;height:8px;border-radius:50%;background:#4E9A73;display:block}
+
+/* Real Courtroom Simulator Centrepiece additions */
+.courtroom-stage-wrapper{
+  flex:1;display:flex;flex-direction:column;justify-content:space-between;
+  padding:16px 24px 24px;position:relative;z-index:1;
+}
+
+.dialogue-spotlight{
+  background:rgba(255,255,255,.97);backdrop-filter:blur(8px);
+  border:1.5px solid var(--maroon);border-radius:var(--r-md);
+  padding:14px 18px;margin:8px 0;box-shadow:0 8px 24px rgba(110,18,23,.12);
+  display:flex;align-items:flex-start;gap:14px;
+}
+.dialogue-spotlight-speaker{
+  font-size:11.5px;font-weight:800;text-transform:uppercase;
+  color:var(--maroon);letter-spacing:.05em;margin-bottom:2px;
+}
+.dialogue-spotlight-text{
+  font-size:14px;line-height:1.5;color:var(--ink);font-family:var(--serif);
+}
+
+.court-well{
+  background:rgba(255,255,255,.94);backdrop-filter:blur(6px);
+  border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:8px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.evidence-chips{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.evidence-pill{
+  display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;
+  padding:3px 10px;background:var(--ivory-2);border:1px solid var(--line);
+  border-radius:var(--r-pill);color:var(--ink);cursor:pointer;transition:all .15s;
+}
+.evidence-pill:hover{border-color:var(--maroon);color:var(--maroon);background:var(--rose)}
+
+.kathghara{
+  background:linear-gradient(180deg,#FFFDFB 0%,#FDF8F2 100%);
+  border:2px solid #E4CEB4;border-radius:var(--r-md);padding:16px;text-align:center;
+  position:relative;box-shadow:0 6px 16px rgba(0,0,0,.05);
+}
+.kathghara-slats{
+  position:absolute;top:0;left:0;right:0;height:6px;
+  background:repeating-linear-gradient(90deg,#A87D56 0,#A87D56 8px,transparent 8px,transparent 16px);
+  border-radius:var(--r-md) var(--r-md) 0 0;
+}
+.credibility-meter{
+  margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);
+  display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--muted);text-align:left;
+}
+.credibility-bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.credibility-fill{height:100%;border-radius:2px;transition:width .3s ease}
+
+.gavel-alert-banner{
+  background:linear-gradient(90deg,#7A151A 0%,#A82B32 100%);
+  color:#fff;padding:8px 16px;border-radius:var(--r-pill);font-size:13px;font-weight:700;
+  display:flex;align-items:center;gap:10px;box-shadow:0 4px 16px rgba(122,21,26,.35);
+  margin-bottom:8px;align-self:center;
+}
+
+.counsel-lectern{
+  background:linear-gradient(180deg,#FFFDFB 0%,#FDF7F0 100%);
+  border:2px solid var(--maroon);border-radius:var(--r-md);padding:16px;
+  box-shadow:0 6px 18px rgba(110,18,23,.1);text-align:center;
+}
 .agents-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .agent-seat{background:#fff;border:1px solid var(--line);border-radius:var(--r-md);padding:18px;text-align:center}
 .agent-seat .ic-slot{background:var(--peach);color:var(--maroon);margin:0 auto 12px}

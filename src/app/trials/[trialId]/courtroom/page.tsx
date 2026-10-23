@@ -109,8 +109,17 @@ export default function CourtroomPage() {
   const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
   const [inputVal, setInputVal] = useState('');
   const [stageStatus, setStageStatus] = useState("Prosecution's turn");
-  const [activeSpeaker, setActiveSpeaker] = useState<'judge' | 'prosecution' | 'defence' | 'witness'>('prosecution');
-  const [agentReasoning, setAgentReasoning] = useState('Prosecution AI is examining PW1 on identification facts.');
+  const [activeSpeaker, setActiveSpeaker] = useState<'judge' | 'prosecution' | 'defence' | 'witness'>('witness');
+  const [currentSpeech, setCurrentSpeech] = useState<{ who: string; role: string; text: string; icon: string }>({
+    who: 'Witness AI (PW1)',
+    role: 'Eyewitness in Box',
+    text: 'I saw the accused near the bus stop at about 9:40 pm. The light from the shop was on. I did not recognise him at first.',
+    icon: 'i-witness',
+  });
+  const [gavelAlert, setGavelAlert] = useState<string | null>(null);
+  const [witnessDemeanor, setWitnessDemeanor] = useState({ credibility: 62, stress: 78, heartRate: 114 });
+  const [admittedOnTable, setAdmittedOnTable] = useState<string[]>(['Ex.1', 'Ex.3']);
+  const [agentReasoning, setAgentReasoning] = useState('Witness AI is deposing under oath from Section 161 BNSS police statement.');
   const [selectedExhibit, setSelectedExhibit] = useState<ExhibitDoc | null>(null);
   const [showVerdict, setShowVerdict] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(872); // 14:32
@@ -152,20 +161,70 @@ export default function CourtroomPage() {
     addMessage('You', 'i-user', trimmed, 'you');
     setInputVal('');
 
-    // Update agentic state
+    // Update active speech bubble and state
     setActiveSpeaker('judge');
     setStageStatus('Judge AI evaluating objection...');
-    setAgentReasoning('Hon\'ble Judge AI is assessing procedural compliance under Section 137 BSA...');
+    setAgentReasoning("Hon'ble Judge AI is reviewing objection against Section 137 BSA rules...");
+    setCurrentSpeech({
+      who: 'Defence Counsel (You)',
+      role: 'Cross-Examining Advocate',
+      text: trimmed,
+      icon: 'i-user',
+    });
 
-    // Timed Judge AI ruling
+    // Check if user tendered Ex.2
+    if (trimmed.includes('Ex.2') && !admittedOnTable.includes('Ex.2')) {
+      setAdmittedOnTable((prev) => [...prev, 'Ex.2']);
+    }
+
+    // Timed Judge AI ruling and Gavel Strike
     setTimeout(() => {
-      addMessage('Judge AI', 'i-judge', 'Noted. Let the record reflect that. Counsel, you may proceed.', 'judge');
+      setGavelAlert('OBJECTION SUSTAINED &bull; SECTION 137 BSA');
+      addMessage('Judge AI', 'i-judge', 'Noted. Objection sustained. Let the record reflect that. Counsel, you may proceed.', 'judge');
       setStageStatus('Your turn');
       setActiveSpeaker('defence');
-      setAgentReasoning('Defence Counsel has the floor. Formulate cross-examination on Ex.3 or Ex.1.');
+      setCurrentSpeech({
+        who: 'The Hon\'ble Judge AI',
+        role: 'Presiding Judge',
+        text: 'Objection sustained. Let the record reflect the contradiction. Counsel for Defence may proceed with cross-examination.',
+        icon: 'i-judge',
+      });
+      setAgentReasoning('Defence Counsel has the floor. Focus on distance from streetlight in Ex.3.');
       setObjectionScore((prev) => Math.min(10, +(prev + 0.2).toFixed(1)));
       setCrossScore((prev) => Math.min(10, +(prev + 0.3).toFixed(1)));
+      setWitnessDemeanor({ credibility: 48, stress: 92, heartRate: 128 });
+
+      setTimeout(() => setGavelAlert(null), 3500);
     }, 700);
+  };
+
+  // Autonomous next-turn simulation step
+  const handleSimulateNextStep = () => {
+    setActiveSpeaker('prosecution');
+    setStageStatus("Prosecution's turn");
+    setAgentReasoning('Prosecution AI is re-examining PW1 on identification confirmation.');
+    const qText = 'PW1, did you distinctly see the accused holding an iron knife before the complainant collapsed?';
+    addMessage('Prosecution AI', 'i-scales', qText, 'prosecution');
+    setCurrentSpeech({
+      who: 'Prosecution AI',
+      role: 'Public Prosecutor',
+      text: qText,
+      icon: 'i-scales',
+    });
+
+    setTimeout(() => {
+      setActiveSpeaker('witness');
+      setAgentReasoning('Witness AI is recalling statements recorded in police case diary.');
+      const aText = 'Yes, sir, he had something dark in his right hand, but it was foggy and the light was dim.';
+      addMessage('Witness AI', 'i-witness', aText, 'witness');
+      setCurrentSpeech({
+        who: 'Witness AI (PW1)',
+        role: 'Eyewitness in Box',
+        text: aText,
+        icon: 'i-witness',
+      });
+      setWitnessDemeanor({ credibility: 55, stress: 84, heartRate: 120 });
+    }, 900);
   };
 
   return (
@@ -259,7 +318,7 @@ export default function CourtroomPage() {
         </div>
       </aside>
 
-      {/* CENTRE: AI Courtroom Stage & Agentic HUD */}
+      {/* CENTRE: AI Courtroom Simulator Stage */}
       <main className="court-col court-col--stage">
         <picture className="stage-bg" aria-hidden="true">
           <source srcSet="/assets/court-front.webp" type="image/webp" />
@@ -268,19 +327,29 @@ export default function CourtroomPage() {
 
         {/* Top Header with Procedural Stage Progress */}
         <div className="court-head">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
             <h2>Courtroom</h2>
             <span className="app-live"><i></i>Live</span>
             <div className="stage-progress">
-              <span className="stage-step is-done">Opening ✓</span>
+              <span className="stage-step is-done">1. Calling ✓</span>
               <span>&rsaquo;</span>
-              <span className="stage-step is-active">Chief Exam</span>
+              <span className="stage-step is-active">2. Examination-in-Chief</span>
               <span>&rsaquo;</span>
-              <span className="stage-step">Cross-Exam</span>
+              <span className="stage-step">3. Cross-Exam</span>
             </div>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: 'auto' }}>
+            <button
+              className="btn btn-outline btn-sm"
+              type="button"
+              onClick={handleSimulateNextStep}
+              title="Advance AI witness and prosecutor exchange"
+              style={{ fontSize: '12px', padding: '4px 10px', height: '32px' }}
+            >
+              <Icon name="i-play" size="xs" />
+              <span>Step Next ⏭</span>
+            </button>
             <span className="tag tag-neutral" style={{ fontVariantNumeric: 'tabular-nums' }}>
               <Icon name="i-clock" size="xs" />
               {formatTimer(timerSeconds)}
@@ -291,36 +360,49 @@ export default function CourtroomPage() {
           </div>
         </div>
 
-        {/* Active Reasoning Banner */}
+        {/* Active Reasoning & Ambient Status Bar */}
         <div
           style={{
-            margin: '10px 16px 0',
-            padding: '8px 14px',
+            margin: '8px 16px 0',
+            padding: '7px 14px',
             background: 'rgba(255, 255, 255, 0.94)',
             backdropFilter: 'blur(6px)',
             border: '1px solid var(--line)',
             borderRadius: 'var(--r-sm)',
             display: 'flex',
             alignItems: 'center',
-            gap: '10px',
+            justifyContent: 'space-between',
             fontSize: '12.5px',
             color: 'var(--ink)',
             boxShadow: 'var(--shadow-sm)',
           }}
         >
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--gold)', display: 'inline-block' }} />
-          <span><strong>Agentic Reasoner:</strong> {agentReasoning}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--gold)', display: 'inline-block' }} />
+            <span><strong>Agentic Reasoner:</strong> {agentReasoning}</span>
+          </div>
+          <span style={{ fontSize: '11.5px', color: 'var(--muted)' }}>Sec 238 BNSS Proceeding</span>
         </div>
 
-        {/* Stage with Bench and 3 Agents */}
-        <div className="stage">
+        {/* STAGE CONTAINER */}
+        <div className="courtroom-stage-wrapper">
+          {/* GAVEL FLASH BANNER (WHEN OBJECTION SUSTAINED) */}
+          {gavelAlert && (
+            <div className="gavel-alert-banner" role="alert">
+              <span style={{ fontSize: '18px' }}>⚖️</span>
+              <span dangerouslySetInnerHTML={{ __html: gavelAlert }} />
+            </div>
+          )}
+
+          {/* 1. THE ELEVATED JUDICIAL BENCH */}
           <div className={`bench ${activeSpeaker === 'judge' ? 'is-speaking' : ''}`}>
+            <span className="bench-dais-border" />
             <span className="ic-slot ic-slot--64">
               <Icon name="i-judge" size="2xl" />
             </span>
             <div>
               <div className="bench-name">The Hon&rsquo;ble Judge AI</div>
-              <div className="bench-role">Presiding Bench &bull; Section 238 BNSS</div>
+              <div className="bench-role">Presiding Sessions Judge &bull; State of Judicial Record</div>
             </div>
             <span className="bench-status">
               <i />
@@ -328,38 +410,122 @@ export default function CourtroomPage() {
             </span>
           </div>
 
+          {/* 2. LIVE STAGE DIALOGUE SPOTLIGHT (Projects Words onto the Room) */}
+          <div className="dialogue-spotlight">
+            <span className="ic-slot ic-slot--40" style={{ background: 'var(--peach)', color: 'var(--maroon)' }}>
+              <Icon name={currentSpeech.icon} size="sm" />
+            </span>
+            <div style={{ flex: 1 }}>
+              <div className="dialogue-spotlight-speaker">
+                {currentSpeech.who} &bull; <span style={{ color: 'var(--muted)', fontWeight: 500 }}>{currentSpeech.role}</span>
+              </div>
+              <div className="dialogue-spotlight-text">
+                &ldquo;{currentSpeech.text}&rdquo;
+              </div>
+            </div>
+          </div>
+
+          {/* 3. THE WELL OF THE COURT: EVIDENCE & EXHIBIT TABLE */}
+          <div className="court-well">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--brick)' }}>
+                Court Clerk Table &bull; Admitted Evidence:
+              </span>
+              <div className="evidence-chips">
+                {admittedOnTable.map((code) => {
+                  const doc = EXHIBITS_DATA.find((e) => e.code === code);
+                  return (
+                    <button
+                      key={code}
+                      type="button"
+                      className="evidence-pill"
+                      onClick={() => doc && setSelectedExhibit(doc)}
+                      title={`Inspect ${doc?.title}`}
+                    >
+                      <Icon name="i-doc-check" size="xs" />
+                      {code}: {doc?.title.split(' ')[0]}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <span style={{ fontSize: '11px', color: 'var(--muted)' }}>Click exhibit to inspect</span>
+          </div>
+
+          {/* 4. THE THREE PARTICIPANT STATIONS */}
           <div className="agents-row">
+            {/* PROSECUTION BAR */}
             <article className={`agent-seat ${activeSpeaker === 'prosecution' ? 'is-speaking' : ''}`}>
               <span className="ic-slot ic-slot--48"><Icon name="i-scales" size="lg" /></span>
               <b>Prosecution AI</b>
-              <em>State Counsel &bull; Burden of Proof</em>
-              <span className="tag tag-neutral">{activeSpeaker === 'prosecution' ? 'Speaking' : 'Waiting'}</span>
+              <em>Public Prosecutor for State</em>
+              <span className="tag tag-neutral" style={{ marginTop: '10px' }}>
+                {activeSpeaker === 'prosecution' ? 'Examining PW1' : 'Waiting'}
+              </span>
             </article>
 
-            <article className={`agent-seat ${activeSpeaker === 'defence' ? 'is-speaking' : ''}`}>
-              <span className="ic-slot ic-slot--48"><Icon name="i-shield" size="lg" /></span>
-              <b>Defence AI</b>
-              <em>Active Defense &bull; Impeachment</em>
-              <span className="tag tag-neutral">{activeSpeaker === 'defence' ? 'Your Turn' : 'Observing'}</span>
+            {/* COUNSEL LECTERN (YOUR DESK) */}
+            <article className={`counsel-lectern ${activeSpeaker === 'defence' ? 'is-speaking' : ''}`}>
+              <span className="ic-slot ic-slot--48" style={{ background: 'var(--rose)', color: 'var(--maroon)' }}>
+                <Icon name="i-shield" size="lg" />
+              </span>
+              <b style={{ color: 'var(--maroon)' }}>Defence Bar (You)</b>
+              <em style={{ color: 'var(--body)' }}>Active Defense Counsel</em>
+              <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginTop: '10px' }}>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm"
+                  style={{ fontSize: '11.5px', padding: '3px 9px', height: '28px' }}
+                  onClick={() => submitUserMessage('I have an objection, Your Honour! The question is leading under Section 137 BSA.')}
+                >
+                  Rise to Object
+                </button>
+              </div>
             </article>
 
-            <article className={`agent-seat ${activeSpeaker === 'witness' ? 'is-speaking' : ''}`}>
+            {/* KATHGHARA (THE WITNESS STAND) */}
+            <article className={`kathghara ${activeSpeaker === 'witness' ? 'is-speaking' : ''}`}>
+              <div className="kathghara-slats" />
               <span className="ic-slot ic-slot--48"><Icon name="i-witness" size="lg" /></span>
               <b>Witness AI (PW1)</b>
-              <em>Under Oath &bull; Ex.1-Ex.4 Scope</em>
-              <span className="tag tag-neutral">{activeSpeaker === 'witness' ? 'Deposing' : 'In Box'}</span>
+              <em style={{ fontSize: '12px' }}>Sworn on Oaths Act 1969</em>
+              <span className="tag tag-neutral" style={{ marginTop: '8px' }}>
+                {activeSpeaker === 'witness' ? 'Deposing' : 'In Stand'}
+              </span>
+
+              {/* Real-time Demeanor Radar */}
+              <div className="credibility-meter">
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Credibility Index</span>
+                  <strong>{witnessDemeanor.credibility}%</strong>
+                </div>
+                <div className="credibility-bar">
+                  <div
+                    className="credibility-fill"
+                    style={{
+                      width: `${witnessDemeanor.credibility}%`,
+                      background: witnessDemeanor.credibility > 60 ? '#059669' : '#D97706',
+                    }}
+                  />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10.5px', marginTop: '2px' }}>
+                  <span>Hesitation: {witnessDemeanor.stress}%</span>
+                  <span>HR: {witnessDemeanor.heartRate} bpm</span>
+                </div>
+              </div>
             </article>
           </div>
 
+          {/* STAGE FOOTER */}
           <div className="stage-foot">
-            <span>You are counsel for the Defence</span>
+            <span>District Sessions Division</span>
             <span className="divider" aria-hidden="true" />
-            <span>Preserving record under Section 137 BSA</span>
+            <span>Preserving record under Section 137 BSA &bull; Section 238 BNSS</span>
           </div>
         </div>
       </main>
 
-      {/* RIGHT: Proceedings Stream & Nyaya Saathi AI Copilot */}
+      {/* RIGHT COLUMN: Proceedings Stream & Nyaya Saathi Co-Pilot */}
       <aside className="court-col court-col--chat" id="chat-col" ref={scrollRef}>
         <div className="court-head">
           <span className="ic-slot ic-slot--40" style={{ background: 'var(--rose)', color: 'var(--maroon)' }}>
