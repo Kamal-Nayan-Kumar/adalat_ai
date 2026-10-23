@@ -751,14 +751,16 @@ table.data .strong{font-weight:600;color:var(--ink)}
 
 /* ---------- courtroom ---------- */
 .court{
-  display:grid;grid-template-columns:280px minmax(0,1fr) 390px;
+  display:grid;grid-template-columns:310px minmax(0,1fr) 390px;
   height:100vh;max-height:100vh;overflow:hidden;background:var(--ivory);
 }
 .court-col{
   min-width:0;height:100vh;max-height:100vh;display:flex;flex-direction:column;
   overflow:hidden;background:#fff;border-right:1px solid var(--line);
 }
-.court-col--info{overflow-y:auto;background:var(--ivory-2)}
+.court-col--info{
+  overflow-y:auto;background:#FAF8F5;padding-bottom:24px;
+}
 .court-col--stage{
   overflow:hidden;position:relative;isolation:isolate;
   background:radial-gradient(120% 80% at 50% 0%,#FFF6EA 0%,rgba(255,246,234,0) 60%),var(--ivory);
@@ -769,6 +771,9 @@ table.data .strong{font-weight:600;color:var(--ink)}
 }
 .court-col--chat .court-scroll{
   flex:1 1 auto;overflow-y:auto;min-height:0;padding:16px 18px;
+  background-color:#FAF8F5;
+  background-image:radial-gradient(rgba(110,18,23,0.15) 1.2px,transparent 1.2px);
+  background-size:16px 16px;
 }
 .court-col--chat .composer{
   flex-shrink:0;position:sticky;bottom:0;z-index:10;
@@ -785,17 +790,21 @@ table.data .strong{font-weight:600;color:var(--ink)}
 .court-head{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);min-height:64px;flex-shrink:0}
 .court-head h2{font-family:var(--serif);font-weight:700;font-size:16px;line-height:1.3;color:var(--ink)}
 .court-head .ic-btn{margin-left:auto}
-.court-info-block + .court-info-block{margin-top:20px}
-.court-info-block h3{font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brick);margin-bottom:10px}
+.court-info-block{padding:0 18px;margin-top:20px}
+.court-info-block h3{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brick);margin-bottom:10px}
 .court-list{display:grid;gap:8px}
-.court-list li{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--body);padding:8px 10px;background:#fff;border:1px solid var(--line);border-radius:var(--r-sm)}
-.court-list .ic{color:var(--maroon)}
+.court-list li{
+  display:flex;align-items:center;gap:10px;font-size:13px;line-height:1.45;color:var(--body);
+  padding:10px 12px;background:#fff;border:1px solid rgba(220,200,180,0.5);border-radius:var(--r-sm);
+  box-shadow:0 1px 3px rgba(0,0,0,0.02);word-break:break-word;
+}
+.court-list .ic{color:var(--maroon);flex-shrink:0}
 
 /* 3D Real Indian Courtroom Stage Scene */
 .courtroom-3d-scene{
   flex:1;position:relative;display:flex;flex-direction:column;
-  justify-content:space-between;padding:16px 22px 20px;
-  perspective:1100px;perspective-origin:50% 30%;overflow:hidden;user-select:none;
+  justify-content:space-between;padding:14px 20px 18px;
+  perspective:1100px;perspective-origin:50% 25%;overflow:hidden;user-select:none;
 }
 .courtroom-floor{
   position:absolute;inset:auto -10% -10% -10%;height:75%;
@@ -805,13 +814,13 @@ table.data .strong{font-weight:600;color:var(--ink)}
   box-shadow:inset 0 40px 60px rgba(80,40,10,0.08);
 }
 
-/* 3D Elevated Judicial Dais */
+/* 3D Elevated Judicial Dais (Center Top) */
 .bench-3d-dais{
-  position:relative;z-index:5;background:linear-gradient(180deg,#F9EFE3 0%,#F3DFC6 60%,#E9D1B2 100%);
-  border:2px solid #D6B995;border-radius:var(--r-lg);padding:18px 24px;
+  position:relative;z-index:10;background:linear-gradient(180deg,#F9EFE3 0%,#F3DFC6 60%,#E9D1B2 100%);
+  border:2px solid #D6B995;border-radius:var(--r-lg);padding:16px 24px;
   box-shadow:0 14px 34px rgba(70,35,10,0.18), inset 0 2px 0 rgba(255,255,255,0.8);
-  display:flex;align-items:center;gap:18px;max-width:680px;margin:0 auto;
-  transform:translateZ(30px);transition:all .25s ease;
+  display:flex;align-items:center;gap:18px;max-width:540px;width:100%;margin:0 auto;
+  transform:translateZ(25px);transition:all .25s ease;
 }
 .bench-3d-dais::before{
   content:"";position:absolute;top:0;left:0;right:0;height:4px;
@@ -825,48 +834,48 @@ table.data .strong{font-weight:600;color:var(--ink)}
 
 /* 3D Court Well Table */
 .court-well-table{
-  position:relative;z-index:4;margin:6px auto;max-width:540px;width:100%;
+  position:relative;z-index:4;margin:8px auto;max-width:520px;width:100%;
   background:linear-gradient(180deg,#FDFBF7 0%,#F6EFE6 100%);
   border:1.5px solid #DBC2A4;border-radius:var(--r-md);padding:8px 16px;
   box-shadow:0 6px 18px rgba(0,0,0,0.07);display:flex;align-items:center;
-  justify-content:space-between;transform:translateZ(15px);
+  justify-content:space-between;transform:translateZ(10px);
 }
 
-/* 3D Counsel Bar: Prosecutor & Defence */
+/* 3D Participant Stations: 3-column layout at the Bar */
 .court-bar-grid{
-  position:relative;z-index:6;display:grid;grid-template-columns:1fr 1fr;
-  gap:28px;margin-top:auto;
+  position:relative;z-index:6;display:grid;grid-template-columns:1fr 0.9fr 1fr;
+  gap:16px;align-items:end;margin-top:auto;
 }
 
 .station-prosecution{
   background:linear-gradient(135deg,#FFFDFB 0%,#FBF5ED 100%);
-  border:2px solid #DFC6A8;border-radius:var(--r-md);padding:16px;
-  box-shadow:0 10px 24px rgba(0,0,0,0.08);transform:rotateY(14deg) rotateX(4deg);
+  border:2px solid #DFC6A8;border-radius:var(--r-md);padding:14px;
+  box-shadow:0 10px 24px rgba(0,0,0,0.08);transform:rotateY(10deg) rotateX(2deg);
   transform-origin:left center;transition:all .25s ease;position:relative;
 }
 .station-prosecution.is-speaking{
   border-color:var(--maroon);
   box-shadow:0 0 0 3px rgba(110,18,23,0.25), 0 12px 30px rgba(110,18,23,0.2);
-  transform:rotateY(8deg) scale(1.02);
+  transform:rotateY(4deg) scale(1.02);
 }
 
 .station-defence{
   background:linear-gradient(225deg,#FFFDFB 0%,#FDF5ED 100%);
-  border:2px solid #DFC6A8;border-radius:var(--r-md);padding:16px;
-  box-shadow:0 10px 24px rgba(0,0,0,0.08);transform:rotateY(-14deg) rotateX(4deg);
+  border:2px solid #DFC6A8;border-radius:var(--r-md);padding:14px;
+  box-shadow:0 10px 24px rgba(0,0,0,0.08);transform:rotateY(-10deg) rotateX(2deg);
   transform-origin:right center;transition:all .25s ease;position:relative;
 }
 .station-defence.is-speaking{
   border-color:var(--maroon);
   box-shadow:0 0 0 3px rgba(110,18,23,0.25), 0 12px 30px rgba(110,18,23,0.2);
-  transform:rotateY(-8deg) scale(1.02);
+  transform:rotateY(-4deg) scale(1.02);
 }
 
-/* The Kathghara: Witness Stand */
+/* The Kathghara: Witness Stand (Stationed at the Bar) */
 .station-witness-box{
-  position:relative;z-index:5;background:linear-gradient(180deg,#FFFDFB 0%,#FDF7EE 100%);
-  border:2px solid #CFA97E;border-radius:var(--r-md);padding:12px 16px;
-  box-shadow:0 8px 22px rgba(90,50,15,0.12);max-width:320px;margin:0 auto 4px;
+  position:relative;z-index:7;background:linear-gradient(180deg,#FFFDFB 0%,#FDF7EE 100%);
+  border:2px solid #CFA97E;border-radius:var(--r-md);padding:12px 14px;
+  box-shadow:0 8px 22px rgba(90,50,15,0.12);
   text-align:center;transition:all .25s ease;
 }
 .station-witness-box.is-speaking{
@@ -883,17 +892,17 @@ table.data .strong{font-weight:600;color:var(--ink)}
 /* SPEECH BUBBLE DIRECTLY OVER CHARACTER HEADS */
 .speech-bubble-anchor{position:relative}
 .speech-bubble-callout{
-  position:absolute;bottom:calc(100% + 12px);left:50%;
-  transform:translateX(-50%);width:max-content;max-width:300px;
+  position:absolute;bottom:calc(100% + 10px);left:50%;
+  transform:translateX(-50%);width:max-content;max-width:280px;
   background:rgba(255,255,255,0.98);backdrop-filter:blur(10px);
-  border:2px solid var(--maroon);border-radius:var(--r-md);padding:10px 14px;
+  border:2px solid var(--maroon);border-radius:var(--r-md);padding:9px 12px;
   box-shadow:0 8px 24px rgba(110,18,23,0.2);z-index:50;
   animation:popBubble 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   text-align:left;
 }
 .speech-bubble-callout::after{
   content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);
-  border-width:8px 8px 0 8px;border-style:solid;
+  border-width:7px 7px 0 7px;border-style:solid;
   border-color:var(--maroon) transparent transparent transparent;
 }
 @keyframes popBubble{
