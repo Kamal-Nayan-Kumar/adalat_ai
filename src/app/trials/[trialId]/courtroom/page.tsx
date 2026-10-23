@@ -400,7 +400,7 @@ export default function CourtroomPage() {
           <div style={{ position: 'relative', zIndex: 10, display: 'flex', justifyContent: 'center', width: '100%' }}>
             <div className={`bench-3d-dais speech-bubble-anchor ${activeSpeaker === 'judge' ? 'is-speaking' : ''}`}>
               {activeSpeaker === 'judge' && (
-                <div className="speech-bubble-callout" style={{ borderColor: 'var(--maroon)' }}>
+                <div className="speech-bubble-callout is-downward" style={{ borderColor: 'var(--maroon)' }}>
                   <div className="speech-bubble-who">The Hon&rsquo;ble Judge AI &bull; Judicial Ruling</div>
                   <div className="speech-bubble-text">&ldquo;{currentSpeech.text}&rdquo;</div>
                 </div>
@@ -599,14 +599,43 @@ export default function CourtroomPage() {
           {/* Chat Stream */}
           <div className="chat-stream" id="chat-stream">
             {messages.map((m) => {
-              const cls = m.type === 'you' ? 'msg is-you' : m.type === 'judge' ? 'msg is-judge' : 'msg';
+              const roleClass =
+                m.type === 'judge'
+                  ? 'msg-role--judge'
+                  : m.type === 'prosecution'
+                  ? 'msg-role--prosecution'
+                  : m.type === 'witness'
+                  ? 'msg-role--witness'
+                  : 'msg-role--defence is-you';
+
+              const roleLabel =
+                m.type === 'judge'
+                  ? 'Judge'
+                  : m.type === 'prosecution'
+                  ? 'Prosecutor'
+                  : m.type === 'witness'
+                  ? 'Witness (PW1)'
+                  : 'Defence (You)';
+
+              const rolePillClass =
+                m.type === 'judge'
+                  ? 'role-pill--judge'
+                  : m.type === 'prosecution'
+                  ? 'role-pill--prosecution'
+                  : m.type === 'witness'
+                  ? 'role-pill--witness'
+                  : 'role-pill--defence';
+
               return (
-                <div key={m.id} className={cls}>
-                  <span className="ic-slot ic-slot--40">
+                <div key={m.id} className={`msg ${roleClass}`}>
+                  <span className="ic-slot">
                     <Icon name={m.icon} size="sm" />
                   </span>
                   <div className="msg-bubble">
-                    <div className="msg-who">{m.who}</div>
+                    <div className="msg-head-row">
+                      <span className="msg-who">{m.who}</span>
+                      <span className={`msg-role-pill ${rolePillClass}`}>{roleLabel}</span>
+                    </div>
                     <div className="msg-text">{m.text}</div>
                     <div className="msg-time">{m.time}</div>
                   </div>

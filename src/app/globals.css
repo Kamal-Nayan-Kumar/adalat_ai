@@ -905,6 +905,14 @@ table.data .strong{font-weight:600;color:var(--ink)}
   border-width:7px 7px 0 7px;border-style:solid;
   border-color:var(--maroon) transparent transparent transparent;
 }
+.speech-bubble-callout.is-downward{
+  bottom:auto;top:calc(100% + 12px);
+}
+.speech-bubble-callout.is-downward::after{
+  top:auto;bottom:100%;
+  border-width:0 7px 7px 7px;
+  border-color:transparent transparent var(--maroon) transparent;
+}
 @keyframes popBubble{
   0%{transform:translateX(-50%) scale(0.85);opacity:0}
   100%{transform:translateX(-50%) scale(1);opacity:1}
@@ -985,16 +993,67 @@ table.data .strong{font-weight:600;color:var(--ink)}
 .stage-foot .divider{width:1px;height:18px;background:var(--line)}
 
 .chat-stream{display:flex;flex-direction:column;gap:14px}
-.msg{display:flex;gap:11px}
-.msg .ic-slot{width:32px;height:32px;background:var(--rose);color:var(--maroon)}
-.msg.is-judge .ic-slot{background:var(--maroon);color:#fff}
+.msg{display:flex;gap:12px;align-items:flex-start}
+.msg .ic-slot{
+  width:36px;height:36px;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;
+}
 .msg.is-you{flex-direction:row-reverse}
-.msg.is-you .ic-slot{background:var(--peach);color:var(--maroon)}
-.msg-bubble{background:var(--ivory-2);border:1px solid var(--line);border-radius:var(--r-md);padding:11px 13px;max-width:88%}
-.msg.is-you .msg-bubble{background:#FDF4EE;border-color:#EEDDD0}
-.msg-who{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:3px}
+
+/* DISTINCT 4-ROLE PROFILE COLORS (Judge, Prosecution, Defence, Witness) */
+.msg-role--judge .ic-slot{
+  background:#6E1217;color:#FFFFFF;border:1.5px solid #F3C68F;
+  box-shadow:0 2px 6px rgba(110,18,23,0.35);
+}
+.msg-role--judge .msg-bubble{
+  background:#FFFDF9;border:1.5px solid #E4D3C0;border-left:4px solid #6E1217;
+}
+.msg-role--judge .msg-who{color:#6E1217}
+
+.msg-role--prosecution .ic-slot{
+  background:#1E3A8A;color:#FFFFFF;border:1.5px solid #93C5FD;
+  box-shadow:0 2px 6px rgba(30,58,138,0.35);
+}
+.msg-role--prosecution .msg-bubble{
+  background:#F8FAFC;border:1.5px solid #CBD5E1;border-left:4px solid #1E3A8A;
+}
+.msg-role--prosecution .msg-who{color:#1E3A8A}
+
+.msg-role--defence .ic-slot{
+  background:#065F46;color:#FFFFFF;border:1.5px solid #A7F3D0;
+  box-shadow:0 2px 6px rgba(6,95,70,0.35);
+}
+.msg-role--defence .msg-bubble{
+  background:#F0FDF4;border:1.5px solid #BBF7D0;border-right:4px solid #065F46;
+}
+.msg-role--defence .msg-who{color:#065F46}
+
+.msg-role--witness .ic-slot{
+  background:#D97706;color:#FFFFFF;border:1.5px solid #FDE68A;
+  box-shadow:0 2px 6px rgba(217,119,6,0.35);
+}
+.msg-role--witness .msg-bubble{
+  background:#FFFBEB;border:1.5px solid #FDE68A;border-left:4px solid #D97706;
+}
+.msg-role--witness .msg-who{color:#B45309}
+
+.msg-bubble{
+  border-radius:var(--r-md);padding:12px 15px;max-width:88%;
+  box-shadow:0 2px 6px rgba(0,0,0,0.04);
+}
+.msg-head-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+.msg-who{font-size:12.5px;font-weight:700}
+.msg-role-pill{
+  font-size:10px;font-weight:700;text-transform:uppercase;padding:2px 7px;
+  border-radius:var(--r-pill);letter-spacing:.04em;
+}
+.role-pill--judge{background:#FBEAE2;color:#6E1217}
+.role-pill--prosecution{background:#EFF6FF;color:#1E3A8A}
+.role-pill--defence{background:#ECFDF5;color:#065F46}
+.role-pill--witness{background:#FEF3C7;color:#92400E}
+
 .msg-text{font-size:13.5px;line-height:1.5;color:var(--body)}
-.msg-time{margin-top:5px;font-size:11px;color:#A79A92}
+.msg-time{margin-top:6px;font-size:11px;color:#9CA3AF;text-align:right}
 .composer{border-top:1px solid var(--line);padding:14px 18px;background:#fff}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
 .chip-btn{height:30px;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-pill);background:#fff;color:var(--body);font-size:12.5px;font-weight:600;cursor:pointer}
