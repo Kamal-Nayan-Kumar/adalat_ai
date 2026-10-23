@@ -13,9 +13,10 @@ interface AppShellProps {
 
 export function AppShell({ children, activeNav = 'dashboard', pageTitle, topActions }: AppShellProps) {
   const [railOpen, setRailOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="shell">
+    <div className={`shell ${collapsed ? 'is-collapsed' : ''}`}>
       {/* Sidebar Rail */}
       <aside className={`shell-rail ${railOpen ? 'is-open' : ''}`} id="shell-rail">
         <Link className="brand" href="/" aria-label="Adalat AI home">
@@ -29,38 +30,38 @@ export function AppShell({ children, activeNav = 'dashboard', pageTitle, topActi
         <nav className="shell-nav" aria-label="App">
           <Link href="/dashboard" aria-current={activeNav === 'dashboard' ? 'page' : undefined}>
             <Icon name="i-home" size="sm" />
-            Dashboard
+            <span>Dashboard</span>
           </Link>
           <Link href="/cases" aria-current={activeNav === 'cases' ? 'page' : undefined}>
             <Icon name="i-doc-lines" size="sm" />
-            Cause List
+            <span>Cause List</span>
           </Link>
           <Link href="/trials/1/courtroom" aria-current={activeNav === 'courtroom' ? 'page' : undefined}>
             <Icon name="i-gavel-lite" size="sm" />
-            Courtroom
+            <span>Courtroom</span>
           </Link>
           <Link href="/trials/1/report" aria-current={activeNav === 'report' ? 'page' : undefined}>
             <Icon name="i-chart-bars" size="sm" />
-            My Report
+            <span>My Report</span>
           </Link>
           <Link href="/dashboard#skills" aria-current={activeNav === 'skills' ? 'page' : undefined}>
             <Icon name="i-radar" size="sm" />
-            Skill Profile
+            <span>Skill Profile</span>
           </Link>
           <Link href="/profile" aria-current={activeNav === 'settings' ? 'page' : undefined}>
             <Icon name="i-gear" size="sm" />
-            Settings
+            <span>Settings</span>
           </Link>
         </nav>
 
         <div className="shell-rail-foot">
           <Link className="btn btn-outline btn-sm" href="/">
             <Icon name="i-arrow-left" size="xs" />
-            Back to site
+            <span>Back to site</span>
           </Link>
           <Link href="/login" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'inherit', fontSize: '13px' }}>
             <Icon name="i-logout" size="sm" />
-            Log out
+            <span>Log out</span>
           </Link>
         </div>
       </aside>
@@ -68,17 +69,30 @@ export function AppShell({ children, activeNav = 'dashboard', pageTitle, topActi
       {/* Main Container */}
       <div className="shell-main">
         <header className="shell-topbar">
-          <button
-            className="ic-btn"
-            id="shell-toggle"
-            aria-expanded={railOpen}
-            aria-controls="shell-rail"
-            aria-label="Open navigation"
-            onClick={() => setRailOpen(!railOpen)}
-          >
-            <Icon name="i-menu" />
-          </button>
-          <h1>{pageTitle}</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {/* Mobile toggle */}
+            <button
+              className="ic-btn"
+              id="shell-toggle"
+              aria-expanded={railOpen}
+              aria-controls="shell-rail"
+              aria-label="Open mobile navigation"
+              onClick={() => setRailOpen(!railOpen)}
+            >
+              <Icon name="i-menu" />
+            </button>
+            {/* Desktop collapse toggle */}
+            <button
+              className="ic-btn"
+              id="sidebar-toggle"
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              onClick={() => setCollapsed(!collapsed)}
+            >
+              <Icon name={collapsed ? 'i-chevron-right' : 'i-filter'} size="sm" />
+            </button>
+            <h1>{pageTitle}</h1>
+          </div>
           <div className="shell-actions">
             {topActions}
             <Link className="avatar" href="/profile" title="Aarav Sharma — Profile & Settings">

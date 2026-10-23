@@ -11,8 +11,52 @@ interface ChatMessage {
   text: string;
   icon: string;
   time: string;
-  type?: 'judge' | 'you' | 'other';
+  type?: 'judge' | 'you' | 'prosecution' | 'witness' | 'system';
 }
+
+interface ExhibitDoc {
+  code: string;
+  title: string;
+  source: string;
+  excerpt: string;
+  status: string;
+  tip: string;
+}
+
+const EXHIBITS_DATA: ExhibitDoc[] = [
+  {
+    code: 'Ex.1',
+    title: 'Post-mortem examination report',
+    source: 'Hospital Medical Dossier (Dr. S. Rao, p. 14)',
+    excerpt: 'Single incised stab wound on left thoracic wall. Dimensions: 2.2 cm length, 4.5 cm depth. Weapon profile: single-edged sharp blade.',
+    status: 'Admitted into Record',
+    tip: 'Compare blade dimension with Ex.2 seized knife width (3.1 cm) to create material contradiction.',
+  },
+  {
+    code: 'Ex.2',
+    title: 'Seizure memo of iron knife',
+    source: 'Police Station Case Diary (PW4 Arresting IO, p. 28)',
+    excerpt: 'Recovery effected from bush near roadside shelter. Seizure memo drawn on 15 March 2024 at 02:10 am without independent panch witnesses.',
+    status: 'Contested Recovery',
+    tip: 'Challenge recovery validity under Section 238 BNSS and State of Rajasthan vs. Raja Ram precedent.',
+  },
+  {
+    code: 'Ex.3',
+    title: 'Site sketch map with lighting layout',
+    source: 'Draftsman Crime Scene Survey (IO Report, p. 4)',
+    excerpt: 'Bus shelter located 42 metres from nearest operational municipal streetlight. Ambient illumination at 09:40 pm rated insufficient.',
+    status: 'Admitted into Record',
+    tip: 'Confront PW1 on inability to identify accused from 42 metres distance in near darkness.',
+  },
+  {
+    code: 'Ex.4',
+    title: 'Certified First Information Report (FIR)',
+    source: 'Civil Lines Police Station (FIR No. 104/2024)',
+    excerpt: 'FIR registered at 11:45 pm against unknown assailant. Accused named 18 hours later based solely on supplementary statement.',
+    status: 'Admitted into Record',
+    tip: 'Highlight that PW1 did not name the accused in the prompt first information report.',
+  },
+];
 
 const INITIAL_MESSAGES: ChatMessage[] = [
   {
@@ -29,7 +73,7 @@ const INITIAL_MESSAGES: ChatMessage[] = [
     text: 'State calls PW1, the eyewitness. I offer PW1 for examination-in-chief.',
     icon: 'i-scales',
     time: '10:33',
-    type: 'other',
+    type: 'prosecution',
   },
   {
     id: 'm3',
@@ -45,7 +89,7 @@ const INITIAL_MESSAGES: ChatMessage[] = [
     text: 'I saw the accused near the bus stop at about 9:40 pm. The light from the shop was on. I did not recognise him at first.',
     icon: 'i-witness',
     time: '10:34',
-    type: 'other',
+    type: 'witness',
   },
   {
     id: 'm5',
@@ -65,8 +109,13 @@ export default function CourtroomPage() {
   const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
   const [inputVal, setInputVal] = useState('');
   const [stageStatus, setStageStatus] = useState("Prosecution's turn");
+  const [activeSpeaker, setActiveSpeaker] = useState<'judge' | 'prosecution' | 'defence' | 'witness'>('prosecution');
+  const [agentReasoning, setAgentReasoning] = useState('Prosecution AI is examining PW1 on identification facts.');
+  const [selectedExhibit, setSelectedExhibit] = useState<ExhibitDoc | null>(null);
   const [showVerdict, setShowVerdict] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(872); // 14:32
+  const [crossScore, setCrossScore] = useState(6.9);
+  const [objectionScore, setObjectionScore] = useState(8.1);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -90,7 +139,7 @@ export default function CourtroomPage() {
     }
   };
 
-  const addMessage = (who: string, icon: string, text: string, type?: 'judge' | 'you' | 'other') => {
+  const addMessage = (who: string, icon: string, text: string, type?: 'judge' | 'you' | 'prosecution' | 'witness' | 'system') => {
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const newMsg: ChatMessage = { id: `m_${Date.now()}_${Math.random()}`, who, text, icon, time, type };
     setMessages((prev) => [...prev, newMsg]);
@@ -103,10 +152,19 @@ export default function CourtroomPage() {
     addMessage('You', 'i-user', trimmed, 'you');
     setInputVal('');
 
-    // Simulated Judge ruling after 700ms
+    // Update agentic state
+    setActiveSpeaker('judge');
+    setStageStatus('Judge AI evaluating objection...');
+    setAgentReasoning('Hon\'ble Judge AI is assessing procedural compliance under Section 137 BSA...');
+
+    // Timed Judge AI ruling
     setTimeout(() => {
       addMessage('Judge AI', 'i-judge', 'Noted. Let the record reflect that. Counsel, you may proceed.', 'judge');
       setStageStatus('Your turn');
+      setActiveSpeaker('defence');
+      setAgentReasoning('Defence Counsel has the floor. Formulate cross-examination on Ex.3 or Ex.1.');
+      setObjectionScore((prev) => Math.min(10, +(prev + 0.2).toFixed(1)));
+      setCrossScore((prev) => Math.min(10, +(prev + 0.3).toFixed(1)));
     }, 700);
   };
 
@@ -125,7 +183,7 @@ export default function CourtroomPage() {
         </button>
       </div>
 
-      {/* LEFT: Case Info */}
+      {/* LEFT COLUMN: Case File & Evidence Inspector */}
       <aside className="court-col court-col--info">
         <div className="court-head">
           <span className="ic-slot ic-slot--40" style={{ background: 'var(--peach)', color: 'var(--maroon)' }}>
@@ -142,7 +200,7 @@ export default function CourtroomPage() {
             <h3>Registry</h3>
             <ul className="court-list">
               <li><Icon name="i-landmark" size="xs" />District Criminal Court</li>
-              <li><Icon name="i-calendar" size="xs" />Offence date 14 Mar 2024</li>
+              <li><Icon name="i-calendar" size="xs" />Offence date: 14 Mar 2024</li>
               <li><Icon name="i-shield-check" size="xs" />BNS / BNSS / BSA 2023</li>
             </ul>
           </div>
@@ -150,25 +208,35 @@ export default function CourtroomPage() {
           <div className="court-info-block">
             <h3>Case facts</h3>
             <ul className="court-list">
-              <li><Icon name="i-alert" size="xs" />Death of the complainant at a roadside</li>
-              <li><Icon name="i-alert" size="xs" />Knife seized from the accused, PW4</li>
+              <li><Icon name="i-alert" size="xs" />Death of complainant at roadside</li>
+              <li><Icon name="i-alert" size="xs" />Knife seized from accused, PW4</li>
               <li><Icon name="i-witness" size="xs" />Single eyewitness, PW1, injured</li>
               <li><Icon name="i-clock" size="xs" />Alibi of 9:40 pm, uncorroborated</li>
             </ul>
           </div>
 
+          {/* Interactive Evidence Exhibits */}
           <div className="court-info-block">
-            <h3>Exhibits</h3>
+            <h3>Trial Exhibits (Click to Inspect)</h3>
             <ul className="court-list">
-              <li><Icon name="i-doc-lines" size="xs" />Ex.1 &mdash; Post-mortem report</li>
-              <li><Icon name="i-doc-lines" size="xs" />Ex.2 &mdash; Seized knife, memo</li>
-              <li><Icon name="i-doc-lines" size="xs" />Ex.3 &mdash; Site sketch</li>
-              <li><Icon name="i-doc-lines" size="xs" />Ex.4 &mdash; FIR copy</li>
+              {EXHIBITS_DATA.map((ex) => (
+                <li
+                  key={ex.code}
+                  onClick={() => setSelectedExhibit(ex)}
+                  style={{ cursor: 'pointer', padding: '6px 8px', borderRadius: 'var(--r-xs)', transition: 'background .15s' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(110,18,23,.05)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <Icon name="i-doc-lines" size="xs" />
+                  <span><strong>{ex.code}</strong> &mdash; {ex.title}</span>
+                </li>
+              ))}
             </ul>
           </div>
 
+          {/* Live Skill Tracker */}
           <div className="court-info-block">
-            <h3>Skill tracker</h3>
+            <h3>Live Skill Tracker</h3>
             <div className="bars">
               <div className="bar-row" data-skill="8.4">
                 <span>Opening</span><em>8.4/10</em>
@@ -178,48 +246,81 @@ export default function CourtroomPage() {
                 <span>Examination</span><em>7.6/10</em>
                 <i className="bar-track"><b className="bar-fill" style={{ width: '76%' }} /></i>
               </div>
-              <div className="bar-row" data-skill="6.9">
-                <span>Cross</span><em>6.9/10</em>
-                <i className="bar-track"><b className="bar-fill" style={{ width: '69%' }} /></i>
+              <div className="bar-row" data-skill={crossScore.toString()}>
+                <span>Cross</span><em>{crossScore}/10</em>
+                <i className="bar-track"><b className="bar-fill" style={{ width: `${crossScore * 10}%` }} /></i>
               </div>
-              <div className="bar-row" data-skill="8.1">
-                <span>Objections</span><em>8.1/10</em>
-                <i className="bar-track"><b className="bar-fill is-green" style={{ width: '81%' }} /></i>
+              <div className="bar-row" data-skill={objectionScore.toString()}>
+                <span>Objections</span><em>{objectionScore}/10</em>
+                <i className="bar-track"><b className="bar-fill is-green" style={{ width: `${objectionScore * 10}%` }} /></i>
               </div>
             </div>
           </div>
         </div>
       </aside>
 
-      {/* CENTRE: Courtroom Stage */}
+      {/* CENTRE: AI Courtroom Stage & Agentic HUD */}
       <main className="court-col court-col--stage">
         <picture className="stage-bg" aria-hidden="true">
           <source srcSet="/assets/court-front.webp" type="image/webp" />
           <img src="/assets/court-front.png" alt="" width={1200} height={800} />
         </picture>
 
+        {/* Top Header with Procedural Stage Progress */}
         <div className="court-head">
-          <h2>Courtroom</h2>
-          <span className="app-live" style={{ marginLeft: '8px' }}><i></i>Live</span>
-          <span className="tag tag-neutral" style={{ marginLeft: '8px', fontVariantNumeric: 'tabular-nums' }}>
-            <Icon name="i-clock" size="xs" />
-            {formatTimer(timerSeconds)}
-          </span>
-          <div className="court-head" style={{ marginLeft: 'auto', border: 0, padding: 0, minHeight: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <h2>Courtroom</h2>
+            <span className="app-live"><i></i>Live</span>
+            <div className="stage-progress">
+              <span className="stage-step is-done">Opening ✓</span>
+              <span>&rsaquo;</span>
+              <span className="stage-step is-active">Chief Exam</span>
+              <span>&rsaquo;</span>
+              <span className="stage-step">Cross-Exam</span>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: 'auto' }}>
+            <span className="tag tag-neutral" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              <Icon name="i-clock" size="xs" />
+              {formatTimer(timerSeconds)}
+            </span>
             <button className="ic-btn" id="open-verdict" aria-label="Show verdict" onClick={() => setShowVerdict(true)}>
               <Icon name="i-trophy" />
             </button>
           </div>
         </div>
 
+        {/* Active Reasoning Banner */}
+        <div
+          style={{
+            margin: '10px 16px 0',
+            padding: '8px 14px',
+            background: 'rgba(255, 255, 255, 0.94)',
+            backdropFilter: 'blur(6px)',
+            border: '1px solid var(--line)',
+            borderRadius: 'var(--r-sm)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            fontSize: '12.5px',
+            color: 'var(--ink)',
+            boxShadow: 'var(--shadow-sm)',
+          }}
+        >
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--gold)', display: 'inline-block' }} />
+          <span><strong>Agentic Reasoner:</strong> {agentReasoning}</span>
+        </div>
+
+        {/* Stage with Bench and 3 Agents */}
         <div className="stage">
-          <div className="bench">
+          <div className={`bench ${activeSpeaker === 'judge' ? 'is-speaking' : ''}`}>
             <span className="ic-slot ic-slot--64">
               <Icon name="i-judge" size="2xl" />
             </span>
             <div>
               <div className="bench-name">The Hon&rsquo;ble Judge AI</div>
-              <div className="bench-role">Presiding</div>
+              <div className="bench-role">Presiding Bench &bull; Section 238 BNSS</div>
             </div>
             <span className="bench-status">
               <i />
@@ -228,35 +329,37 @@ export default function CourtroomPage() {
           </div>
 
           <div className="agents-row">
-            <article className="agent-seat">
+            <article className={`agent-seat ${activeSpeaker === 'prosecution' ? 'is-speaking' : ''}`}>
               <span className="ic-slot ic-slot--48"><Icon name="i-scales" size="lg" /></span>
               <b>Prosecution AI</b>
-              <em>Presents the case for the State</em>
-              <span className="tag tag-neutral">Speaking</span>
+              <em>State Counsel &bull; Burden of Proof</em>
+              <span className="tag tag-neutral">{activeSpeaker === 'prosecution' ? 'Speaking' : 'Waiting'}</span>
             </article>
-            <article className="agent-seat">
+
+            <article className={`agent-seat ${activeSpeaker === 'defence' ? 'is-speaking' : ''}`}>
               <span className="ic-slot ic-slot--48"><Icon name="i-shield" size="lg" /></span>
               <b>Defence AI</b>
-              <em>Cross-examines and objects</em>
-              <span className="tag tag-neutral">Waiting</span>
+              <em>Active Defense &bull; Impeachment</em>
+              <span className="tag tag-neutral">{activeSpeaker === 'defence' ? 'Your Turn' : 'Observing'}</span>
             </article>
-            <article className="agent-seat">
+
+            <article className={`agent-seat ${activeSpeaker === 'witness' ? 'is-speaking' : ''}`}>
               <span className="ic-slot ic-slot--48"><Icon name="i-witness" size="lg" /></span>
-              <b>Witness AI</b>
-              <em>Answers only from the case file</em>
-              <span className="tag tag-neutral">In the box</span>
+              <b>Witness AI (PW1)</b>
+              <em>Under Oath &bull; Ex.1-Ex.4 Scope</em>
+              <span className="tag tag-neutral">{activeSpeaker === 'witness' ? 'Deposing' : 'In Box'}</span>
             </article>
           </div>
 
           <div className="stage-foot">
-            <span>You are the counsel for the Defence</span>
+            <span>You are counsel for the Defence</span>
             <span className="divider" aria-hidden="true" />
-            <span>Section 238 BNSS &mdash; examination of witnesses</span>
+            <span>Preserving record under Section 137 BSA</span>
           </div>
         </div>
       </main>
 
-      {/* RIGHT: Proceedings Chat */}
+      {/* RIGHT: Proceedings Stream & Nyaya Saathi AI Copilot */}
       <aside className="court-col court-col--chat" id="chat-col" ref={scrollRef}>
         <div className="court-head">
           <span className="ic-slot ic-slot--40" style={{ background: 'var(--rose)', color: 'var(--maroon)' }}>
@@ -269,6 +372,37 @@ export default function CourtroomPage() {
         </div>
 
         <div className="court-scroll">
+          {/* Nyaya Saathi Live Co-Pilot Card */}
+          <div className="copilot-panel">
+            <div className="copilot-header">
+              <span className="copilot-tag">
+                <Icon name="i-shield-check" size="xs" />
+                Nyaya Saathi &bull; Co-Pilot
+              </span>
+              <span style={{ fontSize: '11px', color: 'var(--muted)' }}>Live Analysis</span>
+            </div>
+            <div className="copilot-body">
+              PW1 mentioned ambient light from shop. Ex.3 proves shop was shuttered and nearest pole was 42m away.
+            </div>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                className="copilot-action-btn"
+                onClick={() => submitUserMessage('I object under Section 137 BSA — the question assumes facts not in evidence regarding ambient lighting.')}
+              >
+                + Apply Objection
+              </button>
+              <button
+                type="button"
+                className="copilot-action-btn"
+                onClick={() => submitUserMessage('I tender Ex.3 site sketch to confront PW1 on the 42-metre distance from illumination.')}
+              >
+                + Confront with Ex.3
+              </button>
+            </div>
+          </div>
+
+          {/* Chat Stream */}
           <div className="chat-stream" id="chat-stream">
             {messages.map((m) => {
               const cls = m.type === 'you' ? 'msg is-you' : m.type === 'judge' ? 'msg is-judge' : 'msg';
@@ -288,36 +422,28 @@ export default function CourtroomPage() {
           </div>
         </div>
 
-        {/* Composer */}
+        {/* Action Chips & Input Composer */}
         <form className="composer" onSubmit={(e) => { e.preventDefault(); submitUserMessage(inputVal); }}>
           <div className="chips">
-            <button
-              className="chip-btn"
-              type="button"
-              style={{ background: 'var(--rose)', borderColor: 'var(--maroon)', color: 'var(--maroon)', fontWeight: 700 }}
-              onClick={() => submitUserMessage('Nyaya Saathi: Under Section 137 BSA, PW1 cannot contradict their Section 161 BNSS statement without leave.')}
-            >
-              <Icon name="i-shield-check" size="xs" style={{ marginRight: '4px' }} />
-              Nyaya Saathi
-            </button>
             <button className="chip-btn" type="button" onClick={() => submitUserMessage('I have an objection, Your Honour. The question is leading.')}>
-              Objection
+              Objection (Leading)
             </button>
             <button className="chip-btn" type="button" onClick={() => submitUserMessage('I tender Ex.2, the seizure memo of the knife, for identification.')}>
-              Tender exhibit
+              Tender Ex.2
             </button>
             <button className="chip-btn" type="button" onClick={() => submitUserMessage('I seek permission to put the prior statement of PW1 to the witness.')}>
-              Permission gate
+              Permission Gate
             </button>
             <button className="chip-btn" type="button" onClick={() => submitUserMessage('May I reserve my right to further cross-examine this witness?')}>
               Reserve
             </button>
           </div>
+
           <div className="composer-row">
             <input
               type="text"
               id="composer-input"
-              placeholder="Enter your submission or objection"
+              placeholder="Enter legal argument or objection"
               aria-label="Your submission"
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
@@ -329,6 +455,59 @@ export default function CourtroomPage() {
         </form>
       </aside>
 
+      {/* EXHIBIT DOSSIER INSPECTOR DRAWER */}
+      {selectedExhibit && (
+        <div className="evidence-drawer" onClick={() => setSelectedExhibit(null)}>
+          <div className="evidence-drawer-card" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '16px', borderBottom: '1px solid var(--line)' }}>
+              <div>
+                <span className="tag tag-neutral">{selectedExhibit.code}</span>
+                <h3 style={{ fontFamily: 'var(--serif)', fontSize: '20px', color: 'var(--ink)', marginTop: '4px' }}>
+                  {selectedExhibit.title}
+                </h3>
+              </div>
+              <button className="ic-btn" onClick={() => setSelectedExhibit(null)} aria-label="Close drawer">
+                <Icon name="i-close" size="sm" />
+              </button>
+            </div>
+
+            <div style={{ marginTop: '18px', flex: 1 }}>
+              <div style={{ fontSize: '12.5px', color: 'var(--muted)', marginBottom: '8px' }}>
+                <strong>Provenance:</strong> {selectedExhibit.source}
+              </div>
+
+              <div style={{ padding: '16px', background: 'var(--ivory-2)', border: '1.5px solid var(--line)', borderRadius: 'var(--r-sm)', fontSize: '14px', lineHeight: 1.6, color: 'var(--ink)', fontStyle: 'italic' }}>
+                &ldquo;{selectedExhibit.excerpt}&rdquo;
+              </div>
+
+              <div style={{ marginTop: '20px', padding: '14px', background: 'var(--rose)', borderRadius: 'var(--r-sm)', border: '1px solid rgba(110,18,23,.12)' }}>
+                <b style={{ color: 'var(--maroon)', fontSize: '13.5px', display: 'block' }}>Tactical Impeachment Guidance:</b>
+                <p style={{ fontSize: '13px', color: 'var(--body)', marginTop: '4px', lineHeight: 1.45, margin: 0 }}>
+                  {selectedExhibit.tip}
+                </p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--line)' }}>
+              <button
+                className="btn btn-primary"
+                style={{ flex: 1 }}
+                type="button"
+                onClick={() => {
+                  submitUserMessage(`I tender ${selectedExhibit.code}, ${selectedExhibit.title.toLowerCase()}, for examination on the record.`);
+                  setSelectedExhibit(null);
+                }}
+              >
+                Tender into Record
+              </button>
+              <button className="btn btn-outline" type="button" onClick={() => setSelectedExhibit(null)}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* VERDICT MODAL */}
       <div className="modal" id="verdict" hidden={!showVerdict} role="dialog" aria-modal="true" aria-labelledby="verdict-title">
         <div className="modal-card">
@@ -338,7 +517,7 @@ export default function CourtroomPage() {
           <h2 id="verdict-title" style={{ marginTop: '16px' }}>Verdict on State vs. Ramesh Kumar</h2>
           <p>On the admitted record only, the Court finds the prosecution has not proved the presence of the accused at the scene beyond the statement of PW1, which is materially contradicted by Ex.3.</p>
           <p style={{ marginTop: '12px' }}>
-            The accused is <strong>acquitted</strong> and set at liberty. Your cross-examination score was <strong>6.9/10</strong> &mdash; the contradiction landed, but you moved on before the answer was complete.
+            The accused is <strong>acquitted</strong> and set at liberty. Your cross-examination score was <strong>{crossScore}/10</strong> &mdash; the contradiction landed effectively on the record.
           </p>
           <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
             <Link className="btn btn-primary" href={`/trials/${trialId}/report`}>

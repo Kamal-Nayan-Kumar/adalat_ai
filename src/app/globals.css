@@ -4,12 +4,19 @@
    ========================================================================== */
 
 /* ---------- fonts ---------- */
-@font-face{font-family:'Figtree';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/Figtree-400.woff2') format('woff2')}
-@font-face{font-family:'Figtree';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/Figtree-500.woff2') format('woff2')}
-@font-face{font-family:'Figtree';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/Figtree-600.woff2') format('woff2')}
-@font-face{font-family:'Figtree';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/Figtree-700.woff2') format('woff2')}
-@font-face{font-family:'Playfair Display';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/Playfair_Display-700.woff2') format('woff2')}
-@font-face{font-family:'Playfair Display';font-style:normal;font-weight:800;font-display:swap;src:url('/fonts/Playfair_Display-800.woff2') format('woff2')}
+@font-face{font-family:'Plus Jakarta Sans';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/Plus_Jakarta_Sans-400.woff2') format('woff2')}
+@font-face{font-family:'Plus Jakarta Sans';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/Plus_Jakarta_Sans-500.woff2') format('woff2')}
+@font-face{font-family:'Plus Jakarta Sans';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/Plus_Jakarta_Sans-600.woff2') format('woff2')}
+@font-face{font-family:'Plus Jakarta Sans';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/Plus_Jakarta_Sans-700.woff2') format('woff2')}
+@font-face{font-family:'Plus Jakarta Sans';font-style:normal;font-weight:800;font-display:swap;src:url('/fonts/Plus_Jakarta_Sans-800.woff2') format('woff2')}
+
+@font-face{font-family:'Source Serif 4';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/Source_Serif_4-400.woff2') format('woff2')}
+@font-face{font-family:'Source Serif 4';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/Source_Serif_4-600.woff2') format('woff2')}
+@font-face{font-family:'Source Serif 4';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/Source_Serif_4-700.woff2') format('woff2')}
+
+@font-face{font-family:'Fraunces';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/Fraunces-700.woff2') format('woff2')}
+@font-face{font-family:'Fraunces';font-style:normal;font-weight:900;font-display:swap;src:url('/fonts/Fraunces-900.woff2') format('woff2')}
+
 @font-face{font-family:'Noto Serif Devanagari';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/Noto_Serif_Devanagari-700.woff2') format('woff2')}
 
 /* ---------- tokens ---------- */
@@ -30,8 +37,8 @@
   --rose:#FBEAE2;
   --card:#FDF9F2;
 
-  --serif:'Playfair Display',Georgia,'Times New Roman',serif;
-  --sans:'Figtree',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --serif:'Source Serif 4','Fraunces','Playfair Display',Georgia,serif;
+  --sans:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   --deva:'Noto Serif Devanagari','Kohinoor Devanagari','Mangal',serif;
 
   --rail-w:248px;
@@ -444,6 +451,145 @@ svg{display:block}
 .shell{
   display:grid;grid-template-columns:var(--rail-w) minmax(0,1fr);min-height:100vh;
   background:linear-gradient(90deg,var(--maroon-3) 0 var(--rail-w),transparent var(--rail-w));
+  transition:grid-template-columns .2s ease;
+}
+.shell.is-collapsed{
+  grid-template-columns:72px minmax(0,1fr);
+  background:linear-gradient(90deg,var(--maroon-3) 0 72px,transparent 72px);
+}
+.shell.is-collapsed .shell-rail{
+  width:72px;padding:22px 8px;
+}
+.shell.is-collapsed .brand-text,
+.shell.is-collapsed .shell-nav a span,
+.shell.is-collapsed .shell-rail-foot span,
+.shell.is-collapsed .shell-rail-foot a span,
+.shell.is-collapsed .shell-rail-foot button span{
+  display:none;
+}
+.shell.is-collapsed .shell-nav a,
+.shell.is-collapsed .shell-rail-foot a,
+.shell.is-collapsed .shell-rail-foot button{
+  justify-content:center;padding:12px;
+}
+.shell.is-collapsed .brand{
+  justify-content:center;padding:0;
+}
+
+/* Agent pulse and speaker glow animations */
+@keyframes speakerGlow {
+  0%, 100% { border-color: var(--maroon); box-shadow: 0 0 16px rgba(110, 18, 23, 0.25); }
+  50% { border-color: var(--gold); box-shadow: 0 0 24px rgba(206, 135, 50, 0.35); }
+}
+.agent-seat.is-speaking{
+  animation: speakerGlow 2s infinite ease-in-out;
+  background: #FFFDFB;
+  border-width: 2px;
+}
+.agent-seat.is-speaking .tag{
+  background: var(--maroon);
+  color: #fff;
+  font-weight: 700;
+}
+.bench.is-speaking{
+  border: 2px solid var(--maroon);
+  animation: speakerGlow 2s infinite ease-in-out;
+}
+
+/* Agentic Co-pilot Nyaya Saathi Card */
+.copilot-panel{
+  background: linear-gradient(135deg, #FFF9F5 0%, #FFF2EC 100%);
+  border: 1.5px solid rgba(110, 18, 23, 0.2);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(110, 18, 23, 0.06);
+}
+.copilot-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.copilot-tag{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--maroon);
+  letter-spacing: .04em;
+}
+.copilot-body{
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.45;
+  margin-bottom: 10px;
+}
+.copilot-action-btn{
+  background: #fff;
+  border: 1px solid rgba(110, 18, 23, 0.25);
+  color: var(--maroon);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 11px;
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  transition: all .15s;
+}
+.copilot-action-btn:hover{
+  background: var(--maroon);
+  color: #fff;
+  border-color: var(--maroon);
+}
+
+/* Procedural Stage Steps */
+.stage-progress{
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  font-size: 12px;
+  font-weight: 600;
+}
+.stage-step{
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.stage-step.is-done{
+  color: #059669;
+}
+.stage-step.is-active{
+  color: var(--maroon);
+  font-weight: 700;
+}
+
+/* Evidence Inspection Modal Drawer */
+.evidence-drawer{
+  position: fixed;
+  inset: 0;
+  background: rgba(48, 12, 14, 0.45);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 100;
+}
+.evidence-drawer-card{
+  width: 100%;
+  max-width: 520px;
+  height: 100%;
+  background: #fff;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
 }
 .shell-rail{
   position:sticky;top:0;height:100vh;background:var(--maroon-3);color:#E7CFC2;
